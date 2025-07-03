@@ -1,0 +1,23 @@
+bindflowui/
+├── public/                    
+├── src/
+│   ├── components/  
+|   |   ├── Layout.tsx
+|   |   ├── DragDropUploader.tsx         
+│   ├── controllers/
+|   |   ├── launchWorkflow.ts
+|   |   ├── cancelWorkflow.ts
+│   ├── models/
+|   |   ├── workflow.ts                
+│   ├── pages/                 
+│   │   ├── api/
+|   |   |   ├── launch.ts
+|   |   |   ├── cancel.ts    
+│   │   └── __app.tsx          
+│   │   └── index.tsx        
+│   ├── styles/                
+│   ├── theme/                               
+├── .env.local                 
+├── next.config.js             
+├── tsconfig.json              
+└── package.json               
