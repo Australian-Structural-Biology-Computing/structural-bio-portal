@@ -12,7 +12,7 @@ export async function launchWorkflow(
       workspaceId: process.env.NEXT_PUBLIC_WORKSPACE_ID,
       computeEnvId: process.env.NEXT_PUBLIC_COMPUTE_ID,
       workDir: process.env.NEXT_PUBLIC_WORK_DIR,
-      runName: form.run_name || "hello-from-ui",
+      runName: form.runName || "hello-from-ui",
       pipeline: form.pipeline || "https://github.com/nextflow-io/hello"
     })
   };

@@ -4,12 +4,14 @@ import { launchWorkflow } from "@/controllers/launchWorkflow";
 import { WorkflowLaunchForm } from "@/models/workflow";
 import { Button, CircularProgress, Typography } from "@mui/material";
 import { useState } from "react";
+import { useRouter } from "next/router";
 
 const WORKSPACE_ID = process.env.NEXT_PUBLIC_WORKSPACE_ID;
 const COMPUTE_ENV_ID = process.env.NEXT_PUBLIC_COMPUTE_ID;
 const WORK_DIR = process.env.NEXT_PUBLIC_WORK_DIR;
 
 export default function WorkflowLauncher() {
+  const router = useRouter();
   const defaultForm: WorkflowLaunchForm = {
     pipeline: "https://github.com/nextflow-io/hello",
     workspaceId: WORKSPACE_ID,
