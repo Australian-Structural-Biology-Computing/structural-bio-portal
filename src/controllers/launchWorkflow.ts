@@ -24,5 +24,5 @@ export async function launchWorkflow(
 
   const data = await response.json();
   // assuming the API returns workflow ID as `workflowId`
-  return data;
+  return data.data.workflowId;
 }

@@ -1,14 +1,18 @@
 "use client";
 
 import { launchWorkflow } from "@/controllers/launchWorkflow";
-import { WorkflowLaunchForm } from "@/models/workflow";
+import {
+  WorkflowLaunchForm,
+  WorkflowInputSchema,
+  InputParams
+} from "@/models/workflow";
 import { Button, CircularProgress, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-const WORKSPACE_ID = process.env.NEXT_PUBLIC_WORKSPACE_ID;
-const COMPUTE_ENV_ID = process.env.NEXT_PUBLIC_COMPUTE_ID;
-const WORK_DIR = process.env.NEXT_PUBLIC_WORK_DIR;
+const WORKSPACE_ID = process.env.NEXT_PUBLIC_WORKSPACE_ID!;
+const COMPUTE_ENV_ID = process.env.NEXT_PUBLIC_COMPUTE_ID!;
+const WORK_DIR = process.env.NEXT_PUBLIC_WORK_DIR!;
 
 export default function WorkflowLauncher() {
   const router = useRouter();
@@ -17,23 +21,55 @@ export default function WorkflowLauncher() {
     workspaceId: WORKSPACE_ID,
     computeEnvId: COMPUTE_ENV_ID,
     workDir: WORK_DIR,
-    run_name: ""
+    runName: ""
   };
 
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">(
     "idle"
   );
   const [workflowID, setWorkflowId] = useState("");
+  const [schema, setSchema] = useState<WorkflowInputSchema | null>(null);
+  const [inputParams, setInputParams] = useState<InputParams[] | []>([]);
+
+  // fetch input schema
+  useEffect(() => {
+    const fetchSchema = async () => {
+      const res = await fetch(
+        "https://raw.githubusercontent.com/Australian-Structural-Biology-Computing/bindflow/refs/heads/main/nextflow_schema.json"
+      );
+      const data = await res.json();
+      const inputSchema: WorkflowInputSchema = data.$defs
+        .input_output_options ?? { required: [], properties: [] };
+
+      setSchema(inputSchema);
+      const required: string[] = inputSchema?.required ?? [];
+      const params: InputParams[] = Object.entries(inputSchema.properties).map(
+        ([key, value]: [string, any]) => ({
+          key,
+          description: value?.description,
+          format: value?.format,
+          help_text: value?.help_text,
+          pattern: value?.pattern,
+          type: value?.type,
+          required: required.includes(key)
+        })
+      );
+      console.log(required);
+      setInputParams(params);
+    };
+    fetchSchema();
+  }, []);
+  // handle submit job
   const handleClick = async () => {
     try {
       setStatus("loading");
-      console.log("Form: ", defaultForm)
+      console.log("Form: ", defaultForm);
       const result = await launchWorkflow({
         ...defaultForm,
-        run_name: "hello-from-Anne"
+        runName: "hello-from-Anne"
       });
       console.log("Success: ", result);
-      setWorkflowId(result.data.workflowId)
+      setWorkflowId(result);
       setStatus("done");
     } catch (error) {
       console.log("error: ", error);
@@ -42,7 +78,7 @@ export default function WorkflowLauncher() {
   };
   return (
     <>
-      <Button onClick={handleClick} disables={status === "loading"}>
+      <Button onClick={handleClick} disabled={status === "loading"}>
         {status === "loading" ? (
           <CircularProgress size={20} />
         ) : (
