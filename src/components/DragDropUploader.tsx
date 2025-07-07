@@ -22,11 +22,7 @@ export default function DragDropUploader() {
     onDrop,
     multiple: false,
     accept: {
-      "text/csv": [".csv"],
-      "text/plain": [".txt"],
-      "application/json": [".json"],
-      "application/gzip": [".gz"],
-      "application/octet-stream": [".fastq", ".fq"]
+      "text/csv": [".csv"]
     }
   });
 
@@ -35,7 +31,7 @@ export default function DragDropUploader() {
 
     setStatus("loading");
     setTimeout(() => {
-      console.log("Starting project with file:", file.name);
+      console.log("Uploaded: ", file.name);
       setStatus("done");
     }, 1000);
   };
@@ -43,7 +39,8 @@ export default function DragDropUploader() {
   return (
     <Paper
       sx={{
-        p: 4,
+        p: 2,
+        mb: 2,
         textAlign: "center",
         border: "2px dashed #ccc",
         backgroundColor: isDragActive ? "#f0f0f0" : "inherit"
@@ -68,24 +65,6 @@ export default function DragDropUploader() {
             Selected file: <strong>{file.name}</strong>
           </Typography>
         </Box>
-      )}
-
-      {file && (
-        <Stack direction="row" spacing={2} justifyContent="center" mt={3}>
-          <Button
-            variant="contained"
-            onClick={handleStart}
-            disabled={status === "loading"}
-          >
-            {status === "loading" ? "Launching..." : "Start Project"}
-          </Button>
-        </Stack>
-      )}
-
-      {status === "done" && (
-        <Typography mt={2} color="success.main">
-          ✅ Project launched!
-        </Typography>
       )}
     </Paper>
   );

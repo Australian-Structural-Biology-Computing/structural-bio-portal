@@ -24,6 +24,7 @@ export interface InputParams {
   description: string;
   format: string;
   enum: string[];
+  default: string;
   help_text: string;
   pattern: string;
   type: string;
