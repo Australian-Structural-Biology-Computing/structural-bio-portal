@@ -23,6 +23,7 @@ export interface InputParams {
   key: string;
   description: string;
   format: string;
+  enum: string[];
   help_text: string;
   pattern: string;
   type: string;
@@ -45,9 +46,9 @@ export interface WorkflowInputSchema {
 export interface Workflows {
   id: number;
   title: string;
-  href: string;
   description: string;
   github: string;
+  schema: string;
   keywords: string[];
 }
 export interface WorkflowContextType {

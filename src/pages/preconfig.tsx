@@ -8,7 +8,6 @@ import CardActionArea from "@mui/material/CardActionArea";
 import { CardHeader, CardMedia, Chip } from "@mui/material";
 import { useRouter } from "next/router";
 import { useWorkflows } from "@/context/WorkflowsContext";
-import { WorkflowContextType } from "@/models/workflow";
 
 export default function StartProject() {
   const router = useRouter();
@@ -31,7 +30,12 @@ export default function StartProject() {
         workflows.map((workflow, index) => (
           <Card sx={{ maxWidth: 500 }}>
             <CardActionArea
-              onClick={() => handleStartButton(workflow)}
+              onClick={() =>
+                router.push({
+                  pathname: "runs/runWorkflow",
+                  query: { id: workflow.id }
+                })
+              }
               data-active={selectedCard === index ? "" : undefined}
               sx={{
                 height: "100%",
