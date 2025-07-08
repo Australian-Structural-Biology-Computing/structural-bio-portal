@@ -1,19 +1,15 @@
-// components/WorkflowLauncher.tsx
 "use client";
 
 import {
-  Box,
   Checkbox,
   FormControlLabel,
-  InputAdornment,
   MenuItem,
   Button,
-  Typography,
   FormControl,
   FormHelperText
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import { useRouter } from "next/router";
 import { useWorkflows } from "@/context/WorkflowsContext";
 import FTextField from "@/components/form/FTextField";
@@ -22,19 +18,18 @@ import { InputParams, WorkflowInputSchema } from "@/models/workflow";
 import DragDropUploader from "./DragDropUploader";
 
 export default function WorkflowLauncher({
-  onSubmit
+  onSubmit,
+  methods
 }: {
   onSubmit: (formValues: any) => void;
+  methods: UseFormReturn<any>;
 }) {
   const context = useWorkflows();
   const workflows = context?.workflows;
   const params = useRouter();
   const workflowId = Number(params?.query?.id);
   const workflow = workflows?.find((wf) => wf.id === workflowId);
-
   const [inputParams, setInputParams] = useState<InputParams[]>([]);
-
-  const methods = useForm({ mode: "onSubmit" });
 
   useEffect(() => {
     const fetchSchema = async () => {
@@ -71,7 +66,12 @@ export default function WorkflowLauncher({
 
   return (
     <FormProvider methods={methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
+      <form
+        onSubmit={methods.handleSubmit((data) => {
+          console.log("submitted: ", data);
+          onSubmit(data);
+        })}
+      >
         <FTextField
           required
           name="run-name"
@@ -87,7 +87,7 @@ export default function WorkflowLauncher({
                   key={param.key}
                   control={<Checkbox name={param.key} />}
                   label={param.key}
-                  sx={{mb: 1}}
+                  sx={{ mb: 1 }}
                 />
               );
             default:
@@ -102,7 +102,7 @@ export default function WorkflowLauncher({
                     select
                     helperText={param.help_text}
                     size="small"
-                    sx={{mb: 2}}
+                    sx={{ mb: 2 }}
                   >
                     {param.enum.map((option) => (
                       <MenuItem key={option} value={option}>
@@ -129,13 +129,12 @@ export default function WorkflowLauncher({
                   name={param.key}
                   label={param.key.charAt(0).toUpperCase() + param.key.slice(1)}
                   helperText={param.help_text}
-                  sx={{mb: 2}}
+                  sx={{ mb: 2 }}
                   size="small"
                 />
               );
           }
         })}
-
         <Button type="submit" variant="contained" sx={{ mt: 2 }}>
           Launch Workflow
         </Button>

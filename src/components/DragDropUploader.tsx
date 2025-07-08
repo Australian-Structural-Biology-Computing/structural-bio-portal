@@ -2,19 +2,15 @@
 
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Box, Paper, Typography, Button, Stack } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 export default function DragDropUploader() {
   const [file, setFile] = useState<File | null>(null);
-  const [status, setStatus] = useState<"idle" | "dropped" | "loading" | "done">(
-    "idle"
-  );
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       setFile(acceptedFiles[0]);
-      setStatus("dropped");
     }
   }, []);
 
@@ -25,16 +21,6 @@ export default function DragDropUploader() {
       "text/csv": [".csv"]
     }
   });
-
-  const handleStart = () => {
-    if (!file) return;
-
-    setStatus("loading");
-    setTimeout(() => {
-      console.log("Uploaded: ", file.name);
-      setStatus("done");
-    }, 1000);
-  };
 
   return (
     <Paper

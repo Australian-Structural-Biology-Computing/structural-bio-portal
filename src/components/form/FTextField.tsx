@@ -10,6 +10,7 @@ function FTextField({ name, ...other }: FTextFieldProps) {
     <Controller
       name={name}
       control={control}
+      defaultValue=""
       render={({ field, fieldState: { error } }) => (
         <TextField
           {...field}
@@ -24,4 +25,3 @@ function FTextField({ name, ...other }: FTextFieldProps) {
 }
 
 export default FTextField;
-``
