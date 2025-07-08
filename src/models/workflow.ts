@@ -10,7 +10,7 @@ export interface WorkflowLaunchForm {
 }
 export interface WorkflowLaunchPayload {
   launch: {
-    ppipeline: string;
+    pipeline: string;
     workspaceId: string;
     computeEnvId: string;
     workDir: string;
