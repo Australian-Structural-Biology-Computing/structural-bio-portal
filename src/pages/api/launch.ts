@@ -42,6 +42,6 @@ export default async function handler(
     console.log("data here: ", data)
   res.status(seqeraRes.status).send({ data })
   } catch (error: any) {
-    res.send(error)
+    res.status(500).send(error);
   }
 }

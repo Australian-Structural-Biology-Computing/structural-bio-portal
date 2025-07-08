@@ -8,7 +8,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const workflowId = req.body;
+  const { workflowId } = req.body;
+
+  if (!workflowId) {
+    return res.status(400).json({ message: "Missing workflowId" });
+  }
 
   const myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${token}`);
@@ -17,18 +21,18 @@ export default async function handler(
 
   const request = {
     method: "POST",
-    header: myHeaders
+    headers: myHeaders
   };
+
+  const cancelURL = `${BASE_URL}/workflow/${workflowId}/cancel?workspaceId=${WORKSPACE_ID}`;
 
   try {
     console.log("Request: ", request);
-    const result = await fetch(
-      `${BASE_URL}/workflow/:${workflowId}/cancel?workspaceId=${WORKSPACE_ID}`,
-      request
-    );
-    const data = await result.json();
-    res.status(result.status).send({ data });
+    const result = await fetch(cancelURL, request);
+    const data = result.json();
+    res.status(result.status).send(data);
   } catch (error) {
-    res.status(500).send(error);
+    console.log("Error while canceling workflow: ", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 }

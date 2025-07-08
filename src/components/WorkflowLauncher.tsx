@@ -1,0 +1,144 @@
+"use client";
+
+import {
+  Checkbox,
+  FormControlLabel,
+  MenuItem,
+  Button,
+  FormControl,
+  FormHelperText
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import { UseFormReturn } from "react-hook-form";
+import { useRouter } from "next/router";
+import { useWorkflows } from "@/context/WorkflowsContext";
+import FTextField from "@/components/form/FTextField";
+import FormProvider from "@/components/form/FormProvider";
+import { InputParams, WorkflowInputSchema } from "@/models/workflow";
+import DragDropUploader from "./DragDropUploader";
+
+export default function WorkflowLauncher({
+  onSubmit,
+  methods
+}: {
+  onSubmit: (formValues: any) => void;
+  methods: UseFormReturn<any>;
+}) {
+  const context = useWorkflows();
+  const workflows = context?.workflows;
+  const params = useRouter();
+  const workflowId = Number(params?.query?.id);
+  const workflow = workflows?.find((wf) => wf.id === workflowId);
+  const [inputParams, setInputParams] = useState<InputParams[]>([]);
+
+  useEffect(() => {
+    const fetchSchema = async () => {
+      if (!workflow?.schema) return;
+      const res = await fetch(workflow.schema);
+      const data = await res.json();
+      const inputSchema: WorkflowInputSchema = data.$defs
+        ?.input_output_options ||
+        data.definitions?.input_output_options || {
+          required: [],
+          properties: {}
+        };
+
+      const required = inputSchema.required ?? [];
+      const params: InputParams[] = Object.entries(inputSchema.properties).map(
+        ([key, value]: [string, any]) => ({
+          key,
+          description: value?.description,
+          format: value?.format,
+          enum: value?.enum || [],
+          default: value?.default || "",
+          help_text: value?.help_text,
+          pattern: value?.pattern,
+          type: value?.type,
+          required: required.includes(key)
+        })
+      );
+
+      setInputParams(params);
+    };
+
+    fetchSchema();
+  }, [workflow?.schema]);
+
+  return (
+    <FormProvider methods={methods}>
+      <form
+        onSubmit={methods.handleSubmit((data) => {
+          console.log("submitted: ", data);
+          onSubmit(data);
+        })}
+      >
+        <FTextField
+          required
+          name="run-name"
+          label="Job Name"
+          helperText="Name your workflow"
+          size="small"
+        />
+        {inputParams.map((param) => {
+          switch (param.type) {
+            case "boolean":
+              return (
+                <FormControlLabel
+                  key={param.key}
+                  control={<Checkbox name={param.key} />}
+                  label={param.key}
+                  sx={{ mb: 1 }}
+                />
+              );
+            default:
+              if (param.enum.length > 0) {
+                return (
+                  <FTextField
+                    key={param.key}
+                    name={param.key}
+                    label={
+                      param.key.charAt(0).toUpperCase() + param.key.slice(1)
+                    }
+                    select
+                    helperText={param.help_text}
+                    size="small"
+                    sx={{ mb: 2 }}
+                  >
+                    {param.enum.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </FTextField>
+                );
+              }
+              if (param.key === "input") {
+                return (
+                  <FormControl>
+                    <label>
+                      {param.key.charAt(0).toUpperCase() + param.key.slice(1)}
+                    </label>
+                    <FormHelperText>{param.help_text}</FormHelperText>
+                    <DragDropUploader />
+                  </FormControl>
+                );
+              }
+              return (
+                <FTextField
+                  key={param.key}
+                  name={param.key}
+                  label={param.key.charAt(0).toUpperCase() + param.key.slice(1)}
+                  helperText={param.help_text}
+                  sx={{ mb: 2 }}
+                  size="small"
+                />
+              );
+          }
+        })}
+        <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+          Launch Workflow
+        </Button>
+      </form>
+    </FormProvider>
+  );
+}
