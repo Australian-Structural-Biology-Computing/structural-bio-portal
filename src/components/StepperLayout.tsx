@@ -81,7 +81,7 @@ export default function StepperLayout({
 
       {allStepsCompleted() && (
         <Box sx={{ mt: 2 }}>
-          <Typography>All steps completed - you're finished</Typography>
+          <Typography>All steps completed - you are finished</Typography>
           <Button onClick={handleReset}>Reset</Button>
         </Box>
       )}

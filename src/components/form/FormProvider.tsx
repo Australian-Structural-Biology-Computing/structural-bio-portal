@@ -1,5 +1,5 @@
 import { FormProvider as RFormProvider, UseFormReturn } from "react-hook-form";
-import { ReactNode, FormEventHandler } from "react";
+import { ReactNode } from "react";
 
 type FormProviderProps = {
   children: ReactNode;

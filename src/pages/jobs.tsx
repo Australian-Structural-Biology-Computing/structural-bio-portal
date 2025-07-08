@@ -27,16 +27,14 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
   {
     field: "date",
     headerName: "Started at",
-    width: 160,
+    width: 160
   },
   {
     field: "cancel",
     headerName: "Cancel",
     width: 120,
     sortable: false,
-    renderCell: (params) => (
-      <Button variant='outlined'>Cancel</Button>
-  )
+    renderCell: () => <Button variant="outlined">Cancel</Button>
   }
 ];
 

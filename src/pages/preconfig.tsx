@@ -1,5 +1,5 @@
 import * as React from "react";
-import Image from "next/image";
+// import Image from "next/image";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -9,12 +9,10 @@ import { CardHeader, CardMedia, Chip } from "@mui/material";
 import { useRouter } from "next/router";
 import { useWorkflows } from "@/context/WorkflowsContext";
 
-export default function StartProject() {
+export default function PreConfigWorkflows() {
   const router = useRouter();
   const [selectedCard, setSelectedCard] = React.useState(0);
-  const handleStartButton = (workflow: { href: string }) => {
-    router.push(workflow.href);
-  };
+
   const context = useWorkflows();
   const workflows = context?.workflows;
   return (
@@ -28,14 +26,15 @@ export default function StartProject() {
     >
       {workflows &&
         workflows.map((workflow, index) => (
-          <Card sx={{ maxWidth: 500 }}>
+          <Card sx={{ maxWidth: 500 }} key={workflow.id}>
             <CardActionArea
-              onClick={() =>
+              onClick={() => {
+                setSelectedCard(index);
                 router.push({
                   pathname: "runs/runWorkflow",
                   query: { id: workflow.id }
-                })
-              }
+                });
+              }}
               data-active={selectedCard === index ? "" : undefined}
               sx={{
                 height: "100%",
@@ -57,7 +56,7 @@ export default function StartProject() {
               <CardContent>
                 <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
                   {workflow.keywords.map((kword) => (
-                    <Chip variant="outlined" label={kword} />
+                    <Chip variant="outlined" label={kword} key={kword} />
                   ))}
                 </Box>
               </CardContent>
