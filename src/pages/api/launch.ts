@@ -1,3 +1,4 @@
+import { WorkflowLaunchPayload } from "@/models/workflow";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SEQERA_API_URL;
@@ -14,33 +15,36 @@ export default async function handler(
   myHeaders.append("Authorization", `Bearer ${token}`);
   myHeaders.append("Content-Type", "application/json");
   myHeaders.append("Accept", "application/json");
-  
-  const launchPayload = {
+
+  const launchPayload: WorkflowLaunchPayload = {
     launch: {
       computeEnvId,
       runName,
       pipeline,
       workDir,
       workspaceId,
-      revision: "master"
+      revision: "master",
+      paramsText: JSON.stringify({}),
+      configProfiles: [],
+      resume: false
     }
   };
 
   const request = {
-  method: "POST",
-  headers: myHeaders,
-  body: JSON.stringify(launchPayload)
-  }
-  
+    method: "POST",
+    headers: myHeaders,
+    body: JSON.stringify(launchPayload)
+  };
+
   try {
-    console.log("Request: ", request)
+    console.log("Request: ", request);
     const seqeraRes = await fetch(
-      `${BASE_URL}/workflow/launch?workspaceId=${WORKSPACE_ID}`, request
+      `${BASE_URL}/workflow/launch?workspaceId=${WORKSPACE_ID}`,
+      request
     );
-  
+
     const data = await seqeraRes.json();
-    console.log("data here: ", data)
-  res.status(seqeraRes.status).send({ data })
+    res.status(seqeraRes.status).send({ data });
   } catch (error: any) {
     res.status(500).send(error);
   }

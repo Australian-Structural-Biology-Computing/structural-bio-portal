@@ -13,7 +13,10 @@ export async function launchWorkflow(
       computeEnvId: process.env.NEXT_PUBLIC_COMPUTE_ID,
       workDir: process.env.NEXT_PUBLIC_WORK_DIR,
       runName: form.runName || "hello-from-ui",
-      pipeline: form.pipeline || "https://github.com/nextflow-io/hello"
+      pipeline: form.pipeline || "https://github.com/nextflow-io/hello",
+      configProfiles: [],
+      paramsText: JSON.stringify({}),
+      resume: false
     })
   };
   const response = await fetch("/api/launch", request);

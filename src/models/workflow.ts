@@ -16,6 +16,9 @@ export interface WorkflowLaunchPayload {
     workDir: string;
     runName: string;
     revision: string;
+    configProfiles: string[];
+    paramsText: string;
+    resume: boolean;
   };
 }
 // workflow input models
@@ -30,16 +33,15 @@ export interface InputParams {
   type: string;
   required: boolean;
 }
-export interface OutputParams {
-  description: string;
-  format: string;
-  type: string;
+
+// workflow params model
+export interface WorkflowParams {
+  [groupKey: string]: InputParams[];
 }
 export interface WorkflowInputSchema {
   required: string[];
   properties: {
     input: InputParams;
-    outdir: OutputParams;
   };
 }
 

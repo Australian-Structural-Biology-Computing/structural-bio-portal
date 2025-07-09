@@ -7,6 +7,7 @@ import { launchWorkflow } from "@/controllers/launchWorkflow";
 import { useState } from "react";
 import FormProvider from "@/components/form/FormProvider";
 import { useForm } from "react-hook-form";
+import WorkflowParamsPage from "@/components/WorkflowParams";
 
 export default function RunWorkflowPage() {
   const WORKSPACE_ID = process.env.NEXT_PUBLIC_WORKSPACE_ID!;
@@ -56,12 +57,20 @@ export default function RunWorkflowPage() {
       case 0:
         return <WorkflowLauncher methods={methods} onSubmit={handleSubmit} />;
       case 1:
-        return <DragDropUploader />;
+        return <WorkflowParamsPage methods={methods} onSubmit={handleSubmit} />;
       case 2:
+        const submittedData = methods.getValues();
         return (
           <>
-            <Typography variant="h6">Review</Typography>
-            <Typography>Ready to launch your job.</Typography>
+            {submittedData &&
+              Object.entries(submittedData).map(([key, value]) => (
+                <Typography key={key}>
+                  {key
+                    .replace(/[-_]/g, " ")
+                    .replace(/\b\w/g, (char) => char.toUpperCase())}
+                  : {value}
+                </Typography>
+              ))}
             <Button
               variant="contained"
               onClick={() => {

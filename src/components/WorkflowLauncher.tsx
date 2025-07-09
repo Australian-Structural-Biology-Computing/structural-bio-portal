@@ -4,7 +4,6 @@ import {
   Checkbox,
   FormControlLabel,
   MenuItem,
-  Button,
   FormControl,
   FormHelperText
 } from "@mui/material";
@@ -135,9 +134,6 @@ export default function WorkflowLauncher({
               );
           }
         })}
-        <Button type="submit" variant="contained" sx={{ mt: 2 }}>
-          Launch Workflow
-        </Button>
       </form>
     </FormProvider>
   );
