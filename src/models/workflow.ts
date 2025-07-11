@@ -54,4 +54,5 @@ export interface Workflows {
 }
 export interface WorkflowContextType {
   workflows: Workflows[] | null;
+  themes: any;
 }
