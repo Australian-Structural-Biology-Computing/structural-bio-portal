@@ -8,7 +8,8 @@ import {
   AppBar,
   Toolbar,
   Typography,
-  ListItemButton
+  ListItemButton,
+  IconButton
 } from "@mui/material";
 import Link from "@mui/material/Link";
 import NextLink from "next/link";
@@ -19,139 +20,144 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import InsertInvitationOutlinedIcon from "@mui/icons-material/InsertInvitationOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import ContactSupportOutlinedIcon from "@mui/icons-material/ContactSupportOutlined";
+import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import MenuIcon from "@mui/icons-material/Menu";
 import { useRouter } from "next/router";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
+import { useWorkflows } from "@/context/DBContext";
+import { GridLoadIcon } from "@mui/x-data-grid";
 
 const drawerWidth = 240;
-
-const navItems = [
-  {
-    href: "/",
-    icon: <HomeOutlinedIcon />,
-    text: "Home",
-    children: [
-      {
-        href: "binderDesign/",
-        icon: "",
-        text: "Binder design"
-      },
-      {
-        href: "/structurePrediction",
-        icon: "",
-        text: "Structure Prediction"
-      },
-      {
-        href: "/structureSearch",
-        icon: "",
-        text: "Structure search"
-      }
-    ]
-  },
-  {
-    href: "/preconfig",
-    icon: <DeviceHubOutlinedIcon />,
-    text: "Pre-config Workflow"
-    // children: [
-    //   {
-    //     href: "/runs/bindflow",
-    //     icon: "",
-    //     text: "Single structure prediction"
-    //   },
-    //   {
-    //     href: "/interactive",
-    //     icon: "",
-    //     text: "Interaction screening"
-    //   }
-    // ]
-  },
-  // {
-  //   href: "/tools",
-  //   icon: <HandymanOutlinedIcon />,
-  //   text: "Tools"
-  // },
-  { href: "/jobs", icon: <WorkOutlineOutlinedIcon />, text: "Jobs" },
-  { href: "/about", icon: <InfoOutlinedIcon />, text: "About" },
-  {
-    href: "/events",
-    icon: <InsertInvitationOutlinedIcon />,
-    text: "Workshops & Events"
-  },
-  {
-    href: "/contact",
-    icon: <ContactSupportOutlinedIcon />,
-    text: "Support/FAQ"
-  },
-  {
-    href: "/login",
-    icon: <PersonOutlineOutlinedIcon />,
-    text: "Log in"
-  }
-];
 
 export default function Layout({ children }: { children: ReactNode }) {
   const router = useRouter();
 
+  // Get themes list from context
+  const context = useWorkflows();
+  const themes = context?.themes;
+  const [sidebarOpen, setSidebarOpen] = useState(true); // Toggle menu bar
+
+  if (!themes) {
+    return <GridLoadIcon />;
+  }
+
+  const navItems = [
+    {
+      href: "/",
+      text: "Home",
+      icon: <HomeOutlinedIcon />,
+      childs: themes
+    },
+    {
+      href: "/preconfig",
+      icon: <DeviceHubOutlinedIcon />,
+      text: "Pre-config Workflow"
+    },
+    { href: "/jobs", icon: <WorkOutlineOutlinedIcon />, text: "Jobs" },
+    { href: "/about", icon: <InfoOutlinedIcon />, text: "About" },
+    {
+      href: "/events",
+      icon: <InsertInvitationOutlinedIcon />,
+      text: "Workshops & Events"
+    },
+    {
+      href: "/contact",
+      icon: <ContactSupportOutlinedIcon />,
+      text: "Support/FAQ"
+    },
+    {
+      href: "/login",
+      icon: <PersonOutlineOutlinedIcon />,
+      text: "Log in"
+    }
+  ];
+
   return (
     <Box sx={{ display: "flex" }}>
       <AppBar position="fixed" sx={{ zIndex: 1201 }}>
-        <Toolbar>
+        <Toolbar sx={{ justifyContent: "space-between" }}>
           <Typography variant="h6" noWrap component="div">
             Dashboard
           </Typography>
+          <IconButton
+            color="inherit"
+            edge="end"
+            onClick={() => setSidebarOpen((prev) => !prev)}
+          >
+            {sidebarOpen ? <MenuOpenIcon /> : <MenuIcon />}
+          </IconButton>
         </Toolbar>
       </AppBar>
-
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: {
+      {sidebarOpen && (
+        <Drawer
+          anchor="right"
+          variant="temporary"
+          open={sidebarOpen}
+          sx={{
             width: drawerWidth,
-            boxSizing: "border-box"
-          }
+            flexShrink: 0,
+            [`& .MuiDrawer-paper`]: {
+              width: drawerWidth,
+              boxSizing: "border-box"
+            }
+          }}
+        >
+          <Toolbar />
+          <Box sx={{ overflow: "auto" }}>
+            <List>
+              {navItems.map(({ href, icon, text, childs }) => (
+                <>
+                  <Link
+                    href={href}
+                    passHref
+                    underline="none"
+                    key={href}
+                    component={NextLink}
+                  >
+                    <ListItemButton selected={router.pathname === href}>
+                      <ListItemIcon>{icon}</ListItemIcon>
+                      <ListItemText primary={text} />
+                    </ListItemButton>
+                  </Link>
+                  {childs &&
+                    childs.map((child: string) => {
+                      return (
+                        // Generate themes list under Home
+                        <Link
+                          component={NextLink}
+                          href={child}
+                          passHref
+                          underline="none"
+                          key={child}
+                        >
+                          <ListItemButton selected={router.pathname === child}>
+                            <ListItemIcon></ListItemIcon>
+                            <ListItemText
+                              primary={child
+                                .replace(/_/g, " ")
+                                .replace(/\b\w/g, (char) => char.toUpperCase())}
+                            />
+                          </ListItemButton>
+                        </Link>
+                      );
+                    })}
+                </>
+              ))}
+            </List>
+          </Box>
+        </Drawer>
+      )}
+
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: "100%",
+          maxWidth: "1000px", // adjust as needed
+          mx: "auto"
         }}
       >
-        <Toolbar />
-        <Box sx={{ overflow: "auto" }}>
-          <List>
-            {navItems.map(({ href, icon, text, children }) => (
-              <>
-                <Link
-                  href={href}
-                  passHref
-                  underline="none"
-                  key={href}
-                  component={NextLink}
-                >
-                  <ListItemButton selected={router.pathname === href}>
-                    <ListItemIcon>{icon}</ListItemIcon>
-                    <ListItemText primary={text} />
-                  </ListItemButton>
-                </Link>
-
-                {children &&
-                  children.map((child) => (
-                    <Link
-                      component={NextLink}
-                      href={child.href}
-                      passHref
-                      underline="none"
-                      key={child.href}
-                    >
-                      <ListItemButton selected={router.pathname === child.href}>
-                        <ListItemIcon>{child.icon}</ListItemIcon>
-                        <ListItemText primary={child.text} />
-                      </ListItemButton>
-                    </Link>
-                  ))}
-              </>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
-
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
         {children}
       </Box>
