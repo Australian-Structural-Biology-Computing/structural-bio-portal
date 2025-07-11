@@ -43,6 +43,32 @@ export interface WorkflowInputSchema {
   };
 }
 
+// raw db models
+export interface RawTool {
+  id: number;
+  title: string;
+  description: string;
+  github: string;
+  schema: string;
+  keywords: string[];
+}
+
+export interface RawWorkflowGroup {
+  description: string;
+  github: string;
+  schema: string;
+  keywords: string[];
+  tools?: RawTool[];
+}
+
+export type RawPreconfig = Record<string, RawWorkflowGroup>;
+export interface RawThemes {
+  description: string;
+  preconfig: RawPreconfig[];
+}
+
+export type RawDB = Record<string, RawThemes>;
+
 // workflows context model
 export interface Workflows {
   id: number;
@@ -51,8 +77,11 @@ export interface Workflows {
   github: string;
   schema: string;
   keywords: string[];
+  theme: string;
+  preconfig: string;
 }
 export interface WorkflowContextType {
   workflows: Workflows[] | null;
   themes: any;
 }
+
