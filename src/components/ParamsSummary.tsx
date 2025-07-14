@@ -47,16 +47,15 @@ export default function ParamsSummary({
         <ListItem
           key={value}
           disableGutters
+          sx={{ minHeight: 40 }}
           secondaryAction={
-            <ListItemButton aria-label="comment">
-              <IconButton
-                aria-label={editMode ? "Save" : "Edit"}
-                onClick={handleToggleEdit}
-                sx={{ ml: 1 }}
-              >
-                {editMode ? <SaveIcon /> : <EditIcon />}
-              </IconButton>
-            </ListItemButton>
+            <IconButton
+              aria-label={editMode ? "Save" : "Edit"}
+              onClick={handleToggleEdit}
+              sx={{ ml: 1 }}
+            >
+              {editMode ? <SaveIcon /> : <EditIcon />}
+            </IconButton>
           }
         >
           <ListItemText

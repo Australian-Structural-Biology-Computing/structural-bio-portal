@@ -73,17 +73,14 @@ export default function RunWorkflowPage() {
               }}
             >
               {submittedData &&
-                Object.entries(submittedData).map(
-                  ([key, value]) =>
-                    value && (
-                      <ParamsSummary
-                        key={key}
-                        paramKey={key}
-                        value={value}
-                        onChange={(newVal) => methods.setValue(key, newVal)}
-                      />
-                    )
-                )}
+                Object.entries(submittedData).map(([key, value]) => (
+                  <ParamsSummary
+                    key={key}
+                    paramKey={key}
+                    value={value}
+                    onChange={(newVal) => methods.setValue(key, newVal)}
+                  />
+                ))}
             </Stack>
             <Button
               variant="contained"
