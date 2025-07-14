@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import CardActionArea from "@mui/material/CardActionArea";
 import { CardHeader, CardMedia, Chip } from "@mui/material";
 import { useRouter } from "next/router";
-import { useWorkflows } from "@/context/WorkflowsContext";
+import { useWorkflows } from "@/context/DBContext";
 
 export default function PreConfigWorkflows() {
   const router = useRouter();
@@ -52,10 +52,14 @@ export default function PreConfigWorkflows() {
                 height="140"
                 image="/workflows.jpeg"
               />
-              <CardHeader title={workflow.title} />
+              <CardHeader
+                title={workflow.title
+                  .replace(/[-_]/g, " ")
+                  .replace(/\b\w/g, (char) => char.toUpperCase())}
+              />
               <CardContent>
                 <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                  {workflow.keywords.map((kword) => (
+                  {workflow.keywords?.map((kword) => (
                     <Chip variant="outlined" label={kword} key={kword} />
                   ))}
                 </Box>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { useRouter } from "next/router";
-import { useWorkflows } from "@/context/WorkflowsContext";
+import { useWorkflows } from "@/context/DBContext";
 import FormProvider from "@/components/form/FormProvider";
 import { InputParams, WorkflowParams } from "@/models/workflow";
 import ParamAccordionGroup from "@/components/ParamsAccordion";
