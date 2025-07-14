@@ -8,7 +8,7 @@ import FormProvider from "@/components/form/FormProvider";
 import { useForm } from "react-hook-form";
 import WorkflowParamsPage from "@/components/WorkflowParams";
 import ParamsSummary from "@/components/ParamsSummary";
-import { Box } from "@mui/system";
+import { Box, Stack } from "@mui/system";
 
 export default function RunWorkflowPage() {
   const WORKSPACE_ID = process.env.NEXT_PUBLIC_WORKSPACE_ID!;
@@ -60,21 +60,31 @@ export default function RunWorkflowPage() {
       case 1:
         return <WorkflowParamsPage methods={methods} onSubmit={handleSubmit} />;
       case 2:
-        const submittedData = methods.getValues();
+        const submittedData = methods.watch();
         return (
-          <>
-            <Box
+          <Box sx={{ width: "100%" }}>
+            <Stack
+              spacing={1}
+              alignContent="center"
               sx={{
-                display: "grid",
-                gap: 1,
-                maxWidth: "1000px"
+                mb: 2,
+                justifyContent: "center",
+                alignItems: "flex-start"
               }}
             >
               {submittedData &&
-                Object.entries(submittedData).map(([key, value]) => (
-                  <ParamsSummary key={key} paramKey={key} value={value} />
-                ))}
-            </Box>
+                Object.entries(submittedData).map(
+                  ([key, value]) =>
+                    value && (
+                      <ParamsSummary
+                        key={key}
+                        paramKey={key}
+                        value={value}
+                        onChange={(newVal) => methods.setValue(key, newVal)}
+                      />
+                    )
+                )}
+            </Stack>
             <Button
               variant="contained"
               onClick={() => {
@@ -83,7 +93,7 @@ export default function RunWorkflowPage() {
             >
               Final Submit
             </Button>
-          </>
+          </Box>
         );
       default:
         return null;

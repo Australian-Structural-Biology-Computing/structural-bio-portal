@@ -51,24 +51,7 @@ const navItems = [
     href: "/preconfig",
     icon: <DeviceHubOutlinedIcon />,
     text: "Pre-config Workflow"
-    // children: [
-    //   {
-    //     href: "/runs/bindflow",
-    //     icon: "",
-    //     text: "Single structure prediction"
-    //   },
-    //   {
-    //     href: "/interactive",
-    //     icon: "",
-    //     text: "Interaction screening"
-    //   }
-    // ]
   },
-  // {
-  //   href: "/tools",
-  //   icon: <HandymanOutlinedIcon />,
-  //   text: "Tools"
-  // },
   { href: "/jobs", icon: <WorkOutlineOutlinedIcon />, text: "Jobs" },
   { href: "/about", icon: <InfoOutlinedIcon />, text: "About" },
   {
