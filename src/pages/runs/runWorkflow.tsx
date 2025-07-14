@@ -1,6 +1,5 @@
 import StepperLayout from "@/components/StepperLayout";
 import WorkflowLauncher from "@/components/WorkflowLauncher";
-import DragDropUploader from "@/components/DragDropUploader";
 import { Button, Typography } from "@mui/material";
 import { WorkflowLaunchForm } from "@/models/workflow";
 import { launchWorkflow } from "@/controllers/launchWorkflow";
@@ -8,6 +7,8 @@ import { useState } from "react";
 import FormProvider from "@/components/form/FormProvider";
 import { useForm } from "react-hook-form";
 import WorkflowParamsPage from "@/components/WorkflowParams";
+import ParamsSummary from "@/components/ParamsSummary";
+import { Box } from "@mui/system";
 
 export default function RunWorkflowPage() {
   const WORKSPACE_ID = process.env.NEXT_PUBLIC_WORKSPACE_ID!;
@@ -62,15 +63,18 @@ export default function RunWorkflowPage() {
         const submittedData = methods.getValues();
         return (
           <>
-            {submittedData &&
-              Object.entries(submittedData).map(([key, value]) => (
-                <Typography key={key}>
-                  {key
-                    .replace(/[-_]/g, " ")
-                    .replace(/\b\w/g, (char) => char.toUpperCase())}
-                  : {value}
-                </Typography>
-              ))}
+            <Box
+              sx={{
+                display: "grid",
+                gap: 1,
+                maxWidth: "1000px"
+              }}
+            >
+              {submittedData &&
+                Object.entries(submittedData).map(([key, value]) => (
+                  <ParamsSummary key={key} paramKey={key} value={value} />
+                ))}
+            </Box>
             <Button
               variant="contained"
               onClick={() => {

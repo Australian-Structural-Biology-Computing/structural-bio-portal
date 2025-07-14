@@ -1,39 +1,25 @@
 "use client";
 
-import {
-  Checkbox,
-  FormControlLabel,
-  MenuItem,
-  FormControl,
-  FormHelperText,
-  Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { useRouter } from "next/router";
 import { useWorkflows } from "@/context/WorkflowsContext";
-import FTextField from "@/components/form/FTextField";
 import FormProvider from "@/components/form/FormProvider";
 import { InputParams, WorkflowParams } from "@/models/workflow";
-import DragDropUploader from "./DragDropUploader";
-
+import ParamAccordionGroup from "@/components/ParamsAccordion";
 
 export default function WorkflowParamsPage({
-    onSubmit,
-    methods
+  onSubmit,
+  methods
 }: {
-    onSubmit: (formValues: any) => void;
-    methods: UseFormReturn<any>;
+  onSubmit: (formValues: any) => void;
+  methods: UseFormReturn<any>;
 }) {
-    const context = useWorkflows();
-    const workflows = context?.workflows;
-    const params = useRouter();
-    const workflowId = Number(params?.query?.id);
-    const workflow = workflows?.find((wf) => wf.id === workflowId);
+  const context = useWorkflows();
+  const workflows = context?.workflows;
+  const params = useRouter();
+  const workflowId = Number(params?.query?.id);
+  const workflow = workflows?.find((wf) => wf.id === workflowId);
   const [wParams, setWParams] = useState<WorkflowParams>({});
 
   useEffect(() => {
@@ -41,9 +27,8 @@ export default function WorkflowParamsPage({
       if (!workflow?.schema) return;
       const res = await fetch(workflow.schema);
       const data = await res.json();
-       
-      const paramsSchema = data.$defs ||
-        data.definitions
+
+      const paramsSchema = data.$defs || data.definitions;
       // exclude the following params
       const excludeParams = [
         "input_output_options",
@@ -75,7 +60,7 @@ export default function WorkflowParamsPage({
             return acc;
           },
           {}
-        )
+        );
 
       setWParams(params);
     };
@@ -92,75 +77,11 @@ export default function WorkflowParamsPage({
         })}
       >
         {Object.entries(wParams).map(([groupKey, groupParams]) => (
-          <Accordion key={groupKey}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>
-                {groupKey
-                  .replace(/_/g, " ")
-                  .replace(/\b\w/g, (char) => char.toUpperCase())}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {groupParams.map((param, idx) => {
-                switch (param.type) {
-                  case "boolean":
-                    return (
-                      <FormControlLabel
-                        key={param.key}
-                        control={<Checkbox name={param.key} />}
-                        label={param.key}
-                        sx={{ mb: 1 }}
-                      />
-                    );
-                  default:
-                    if (param.enum.length > 0) {
-                      return (
-                        <FTextField
-                          key={param.key}
-                          name={param.key}
-                          label={
-                            param.key.charAt(0).toUpperCase() +
-                            param.key.slice(1)
-                          }
-                          select
-                          helperText={param.help_text}
-                          size="small"
-                          sx={{ mb: 2 }}
-                        >
-                          {param.enum.map((option) => (
-                            <MenuItem key={option} value={option}>
-                              {option}
-                            </MenuItem>
-                          ))}
-                        </FTextField>
-                      );
-                    }
-                    if (param.key === "input") {
-                      return (
-                        <FormControl>
-                          <label>
-                            {param.key.charAt(0).toUpperCase() +
-                              param.key.slice(1)}
-                          </label>
-                          <FormHelperText>{param.help_text}</FormHelperText>
-                          <DragDropUploader />
-                        </FormControl>
-                      );
-                    }
-                    return (
-                      <FTextField
-                        key={param.key}
-                        name={param.key}
-                        label={param.key}
-                        helperText={param.description}
-                        sx={{ mb: 2 }}
-                        size="small"
-                      />
-                    );
-                }
-              })}
-            </AccordionDetails>
-          </Accordion>
+          <ParamAccordionGroup
+            key={groupKey}
+            groupKey={groupKey}
+            groupParams={groupParams}
+          />
         ))}
       </form>
     </FormProvider>
