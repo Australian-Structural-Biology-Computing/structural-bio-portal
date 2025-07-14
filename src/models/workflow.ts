@@ -55,3 +55,13 @@ export interface Workflows {
 export interface WorkflowContextType {
   workflows: Workflows[] | null;
 }
+
+// runs info model
+export interface RunInfo {
+  id: string;
+  run: string;
+  workflow: string;
+  status: string;
+  date: string;
+  cancel: string
+}

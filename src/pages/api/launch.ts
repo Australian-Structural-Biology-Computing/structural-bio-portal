@@ -39,7 +39,6 @@ export default async function handler(
     );
   
     const data = await seqeraRes.json();
-    console.log("data here: ", data)
   res.status(seqeraRes.status).send({ data })
   } catch (error: any) {
     res.status(500).send(error);

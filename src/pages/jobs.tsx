@@ -1,63 +1,90 @@
 'use client';
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridNoColumnsOverlay } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
-
-const columns: GridColDef<(typeof rows)[number]>[] = [
-  { field: "id", headerName: "ID", width: 90 },
-  {
-    field: "run",
-    headerName: "Run name",
-    width: 150,
-    editable: true
-  },
-  {
-    field: "workflow",
-    headerName: "Workflow",
-    width: 150,
-    editable: true
-  },
-  {
-    field: "status",
-    headerName: "Status",
-    width: 110,
-    editable: true
-  },
-  {
-    field: "date",
-    headerName: "Started at",
-    width: 160
-  },
-  {
-    field: "cancel",
-    headerName: "Cancel",
-    width: 120,
-    sortable: false,
-    renderCell: () => <Button variant="outlined">Cancel</Button>
-  }
-];
-
-const rows = [
-  { id: 1, run: "hello-Anne", workflow: "BindFlow", status: "Canceled", date: "2025-03-07 2:00 PM", cancel: "" }]
-
+import { listRuns } from "@/controllers/listRuns";
+import { RunInfo } from "@/models/workflow";
+import { cancelWorkflow } from "@/controllers/cancelWorkflow";
 
 export default function MyRuns() {
+  const [runs, setRuns] = React.useState<RunInfo[]>([]);
+  const fetchRuns = async () => {
+    const result = await listRuns();
+    const Runs: RunInfo[] = result.map((run) => ({
+      id: run?.workflow.id,
+      run: run?.workflow.runName,
+      workflow: run?.workflow.repository,
+      status: run?.workflow.status,
+      date: new Date(run?.workflow.dateCreated).toLocaleString(),
+      cancel: ""
+    }));
+    setRuns(Runs);
+  };
+  const handleCancel = (workflowId: string) => {
+    cancelWorkflow(workflowId);
+    fetchRuns();
+  };
+  React.useEffect(() => {
+    fetchRuns();
+  }, []);
+  const columns: GridColDef<RunInfo>[] = [
+    { field: "id", headerName: "ID", width: 200 },
+    {
+      field: "run",
+      headerName: "Run name",
+      width: 200,
+      editable: true
+    },
+    {
+      field: "workflow",
+      headerName: "Workflow",
+      width: 150,
+      editable: true
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      width: 110,
+      editable: true
+    },
+    {
+      field: "date",
+      headerName: "Started at",
+      width: 160
+    },
+    {
+      field: "cancel",
+      headerName: "Cancel",
+      width: 120,
+      sortable: false,
+      renderCell: (params) => (
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={() => {
+            handleCancel(params.row.id);
+          }}
+        >
+          Cancel
+        </Button>
+      )
+    }
+  ];
   return (
-    <Box sx={{ height: 400, width: "100%" }}>
+    <Box sx={{ hieght: "100vh", width: "100%", maxWidth: "1000px" }}>
       <DataGrid
-        rows={rows}
+        rows={runs}
         columns={columns}
         initialState={{
           pagination: {
             paginationModel: {
-              pageSize: 5
+              pageSize: 10
             }
           }
         }}
-        pageSizeOptions={[5]}
+        pageSizeOptions={[10]}
         checkboxSelection
-        disableRowSelectionOnClick
       />
     </Box>
   );

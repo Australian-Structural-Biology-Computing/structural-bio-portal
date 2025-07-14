@@ -8,30 +8,27 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { workflowId } = req.body;
-
-  if (!workflowId) {
-    return res.status(400).json({ message: "Missing workflowId" });
-  }
 
   const myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${token}`);
   myHeaders.append("Content-Type", "application/json");
   myHeaders.append("Accept", "application/json");
 
+
   const request = {
-    method: "POST",
+    method: "GET",
     headers: myHeaders
   };
-
-  const cancelURL = `${BASE_URL}/workflow/${workflowId}/cancel?workspaceId=${WORKSPACE_ID}`;
-  console.log("Request: ", cancelURL);
+  
 
   try {
-    const result = await fetch(cancelURL, request);
-    res.status(result.status).send(result.status);
+    const response = await fetch(`${BASE_URL}/user-info`, request);
+    const data = await response.json();
+    const USER_ID = data?.user.id;
+      
+    res.status(response.status).json({ USER_ID });
   } catch (error) {
-    console.log("Error while canceling workflow: ", error);
+    console.log("Error while getting user info: ", error);
     res.status(500).json({ message: "Internal server error" });
   }
 }
