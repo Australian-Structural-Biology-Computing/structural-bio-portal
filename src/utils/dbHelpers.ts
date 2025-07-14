@@ -13,7 +13,7 @@ function transformWorkflows(data: RawDB[]): Workflows[] {
     return categoryData.preconfig.flatMap((subcatGroup) =>
       Object.entries(subcatGroup).flatMap(([subcatName, subcatValue]) => {
         // Special case: all-in-one workflow in single_structure_prediction
-        if (subcatName === "single_structure_prediction") {
+        if (subcatValue.all_in_one) {
           return [
             {
               id: 0,
@@ -21,6 +21,7 @@ function transformWorkflows(data: RawDB[]): Workflows[] {
               description: subcatValue.description,
               github: subcatValue.github,
               schema: subcatValue.schema,
+              all_in_one: true,
               keywords: subcatValue.keywords || [],
               theme: categoryName,
               preconfig: subcatName
@@ -32,7 +33,8 @@ function transformWorkflows(data: RawDB[]): Workflows[] {
         return (subcatValue.tools || []).map((tool: RawTool) => ({
           ...tool,
           theme: categoryName,
-          preconfig: subcatName
+          preconfig: subcatName,
+          all_in_one: false
         }));
       })
     );

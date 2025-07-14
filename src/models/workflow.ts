@@ -58,6 +58,7 @@ export interface RawWorkflowGroup {
   github: string;
   schema: string;
   keywords: string[];
+  all_in_one: boolean | false;
   tools?: RawTool[];
 }
 
