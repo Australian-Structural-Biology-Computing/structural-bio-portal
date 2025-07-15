@@ -4,14 +4,13 @@ import {
   Checkbox,
   FormControlLabel,
   MenuItem,
-  Button,
   FormControl,
   FormHelperText
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { useRouter } from "next/router";
-import { useWorkflows } from "@/context/WorkflowsContext";
+import { useWorkflows } from "@/context/DBContext";
 import FTextField from "@/components/form/FTextField";
 import FormProvider from "@/components/form/FormProvider";
 import { InputParams, WorkflowInputSchema } from "@/models/workflow";
@@ -135,9 +134,6 @@ export default function WorkflowLauncher({
               );
           }
         })}
-        <Button type="submit" variant="contained" sx={{ mt: 2 }}>
-          Launch Workflow
-        </Button>
       </form>
     </FormProvider>
   );

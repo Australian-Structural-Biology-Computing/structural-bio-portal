@@ -16,6 +16,9 @@ export interface WorkflowLaunchPayload {
     workDir: string;
     runName: string;
     revision: string;
+    configProfiles: string[];
+    paramsText: string;
+    resume: boolean;
   };
 }
 // workflow input models
@@ -30,18 +33,44 @@ export interface InputParams {
   type: string;
   required: boolean;
 }
-export interface OutputParams {
-  description: string;
-  format: string;
-  type: string;
+
+// workflow params model
+export interface WorkflowParams {
+  [groupKey: string]: InputParams[];
 }
 export interface WorkflowInputSchema {
   required: string[];
   properties: {
     input: InputParams;
-    outdir: OutputParams;
   };
 }
+
+// raw db models
+export interface RawTool {
+  id: number;
+  title: string;
+  description: string;
+  github: string;
+  schema: string;
+  keywords: string[];
+}
+
+export interface RawWorkflowGroup {
+  description: string;
+  github: string;
+  schema: string;
+  keywords: string[];
+  all_in_one: boolean | false;
+  tools?: RawTool[];
+}
+
+export type RawPreconfig = Record<string, RawWorkflowGroup>;
+export interface RawThemes {
+  description: string;
+  preconfig: RawPreconfig[];
+}
+
+export type RawDB = Record<string, RawThemes>;
 
 // workflows context model
 export interface Workflows {
@@ -51,10 +80,14 @@ export interface Workflows {
   github: string;
   schema: string;
   keywords: string[];
+  theme: string;
+  preconfig: string;
 }
 export interface WorkflowContextType {
   workflows: Workflows[] | null;
+  themes: any;
 }
+
 
 // runs info model
 export interface RunInfo {
