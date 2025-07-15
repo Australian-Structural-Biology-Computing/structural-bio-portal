@@ -62,6 +62,7 @@ export default function MyRuns() {
         <Button
           variant="outlined"
           size="small"
+          disabled={!["SUBMITTED", "RUNNING"].includes(params.row.status)}
           onClick={() => {
             handleCancel(params.row.id);
           }}
@@ -72,7 +73,7 @@ export default function MyRuns() {
     }
   ];
   return (
-    <Box sx={{ hieght: "100vh", width: "100%", maxWidth: "1000px" }}>
+    <Box sx={{ hieght: "100vh", width: "100%" }}>
       <DataGrid
         rows={runs}
         columns={columns}
