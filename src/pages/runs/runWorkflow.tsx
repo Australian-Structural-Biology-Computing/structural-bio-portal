@@ -1,12 +1,14 @@
 import StepperLayout from "@/components/StepperLayout";
 import WorkflowLauncher from "@/components/WorkflowLauncher";
-import DragDropUploader from "@/components/DragDropUploader";
 import { Button, Typography } from "@mui/material";
 import { WorkflowLaunchForm } from "@/models/workflow";
 import { launchWorkflow } from "@/controllers/launchWorkflow";
 import { useState } from "react";
 import FormProvider from "@/components/form/FormProvider";
 import { useForm } from "react-hook-form";
+import WorkflowParamsPage from "@/components/WorkflowParams";
+import ParamsSummary from "@/components/ParamsSummary";
+import { Box, Stack } from "@mui/system";
 
 export default function RunWorkflowPage() {
   const WORKSPACE_ID = process.env.NEXT_PUBLIC_WORKSPACE_ID!;
@@ -56,12 +58,30 @@ export default function RunWorkflowPage() {
       case 0:
         return <WorkflowLauncher methods={methods} onSubmit={handleSubmit} />;
       case 1:
-        return <DragDropUploader />;
+        return <WorkflowParamsPage methods={methods} onSubmit={handleSubmit} />;
       case 2:
+        const submittedData = methods.watch();
         return (
-          <>
-            <Typography variant="h6">Review</Typography>
-            <Typography>Ready to launch your job.</Typography>
+          <Box sx={{ width: "100%" }}>
+            <Stack
+              spacing={1}
+              alignContent="center"
+              sx={{
+                mb: 2,
+                justifyContent: "center",
+                alignItems: "flex-start"
+              }}
+            >
+              {submittedData &&
+                Object.entries(submittedData).map(([key, value]) => (
+                  <ParamsSummary
+                    key={key}
+                    paramKey={key}
+                    value={value}
+                    onChange={(newVal) => methods.setValue(key, newVal)}
+                  />
+                ))}
+            </Stack>
             <Button
               variant="contained"
               onClick={() => {
@@ -70,7 +90,7 @@ export default function RunWorkflowPage() {
             >
               Final Submit
             </Button>
-          </>
+          </Box>
         );
       default:
         return null;
