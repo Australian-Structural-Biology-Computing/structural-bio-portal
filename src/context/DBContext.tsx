@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { Workflows, WorkflowContextType } from "@/models/workflow";
+import {
+  Workflows,
+  WorkflowContextType,
+  ThemesContext
+} from "@/models/workflow";
 import fetchWorkflowsFromDB from "@/utils/dbHelpers";
 
 const DBContext = createContext<WorkflowContextType | undefined>(undefined);
@@ -8,7 +12,7 @@ export const WorkflowsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [themes, setThemes] = useState<string[]>([]);
+  const [themes, setThemes] = useState<ThemesContext[]>([]);
   const [workflows, setWorkflows] = useState<Workflows[] | null>(null);
 
   useEffect(() => {

@@ -55,10 +55,6 @@ export interface RawTool {
 
 export interface RawWorkflowGroup {
   description: string;
-  github: string;
-  schema: string;
-  keywords: string[];
-  all_in_one: boolean | false;
   tools?: RawTool[];
 }
 
@@ -67,6 +63,11 @@ export interface RawThemes {
   description: string;
   preconfig: RawPreconfig[];
 }
+export interface PreconfigContext {
+  key: string;
+  description: string;
+}
+export type ThemesContext = Record<string, PreconfigContext>;
 
 export type RawDB = Record<string, RawThemes>;
 
