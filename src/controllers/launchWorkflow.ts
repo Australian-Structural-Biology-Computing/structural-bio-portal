@@ -15,7 +15,7 @@ export async function launchWorkflow(
       runName: form.runName || "hello-from-ui",
       pipeline: form.pipeline || "https://github.com/nextflow-io/hello",
       configProfiles: [],
-      paramsText: JSON.stringify({}),
+      paramsText: form.paramsText,
       resume: false
     })
   };
