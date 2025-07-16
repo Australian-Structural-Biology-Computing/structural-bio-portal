@@ -1,13 +1,17 @@
 import { WorkflowLaunchPayload } from "@/models/workflow";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-const BASE_URL = process.env.NEXT_PUBLIC_SEQERA_API_URL;
-const WORKSPACE_ID = process.env.NEXT_PUBLIC_WORKSPACE_ID;
-const token = process.env.NEXT_PUBLIC_SEQERA_ACCESS_TOKEN!;
+const BASE_URL = process.env.SEQERA_API_URL;
+const WORKSPACE_ID = process.env.WORKSPACE_ID;
+const token = process.env.SEQERA_ACCESS_TOKEN!;
 
+type ResponseData = {
+  workflowId: string;
+  message: string;
+};
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse<ResponseData>
 ) {
   const { workspaceId, computeEnvId, workDir, runName, pipeline } = req.body;
 
@@ -44,7 +48,10 @@ export default async function handler(
     );
 
     const data = await seqeraRes.json();
-  res.status(seqeraRes.status).send({ data })
+    const workflowId = data?.data.workflowId;
+    res
+      .status(seqeraRes.status)
+      .send({ message: "Launched the workflow!", workflowId: workflowId });
   } catch (error: any) {
     res.status(500).send(error);
   }

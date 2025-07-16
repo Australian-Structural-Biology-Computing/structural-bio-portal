@@ -11,9 +11,9 @@ import ParamsSummary from "@/components/ParamsSummary";
 import { Box, Stack } from "@mui/system";
 
 export default function RunWorkflowPage() {
-  const WORKSPACE_ID = process.env.NEXT_PUBLIC_WORKSPACE_ID!;
-  const COMPUTE_ENV_ID = process.env.NEXT_PUBLIC_COMPUTE_ID!;
-  const WORK_DIR = process.env.NEXT_PUBLIC_WORK_DIR!;
+  const WORKSPACE_ID = process.env.WORKSPACE_ID!;
+  const COMPUTE_ENV_ID = process.env.COMPUTE_ID!;
+  const WORK_DIR = process.env.WORK_DIR!;
   const methods = useForm({ mode: "onSubmit" });
 
   const [formData, setFormData] = useState<any>(null);

@@ -1,7 +1,7 @@
 'use client';
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef, GridNoColumnsOverlay } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
 import { listRuns } from "@/controllers/listRuns";
 import { RunInfo } from "@/models/workflow";
