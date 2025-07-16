@@ -8,7 +8,9 @@ import { RunInfo } from "@/models/workflow";
 import { cancelWorkflow } from "@/controllers/cancelWorkflow";
 
 export default function MyRuns() {
+
   const [runs, setRuns] = React.useState<RunInfo[]>([]);
+
   const fetchRuns = async () => {
     const result = await listRuns();
     const Runs: RunInfo[] = result.map((run) => ({
@@ -25,9 +27,11 @@ export default function MyRuns() {
     cancelWorkflow(workflowId);
     fetchRuns();
   };
+
   React.useEffect(() => {
     fetchRuns();
   }, []);
+
   const columns: GridColDef<RunInfo>[] = [
     { field: "id", headerName: "ID", width: 200 },
     {

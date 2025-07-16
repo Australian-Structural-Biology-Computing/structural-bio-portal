@@ -11,9 +11,7 @@ import ParamsSummary from "@/components/ParamsSummary";
 import { Box, Stack } from "@mui/system";
 
 export default function RunWorkflowPage() {
-  const WORKSPACE_ID = process.env.WORKSPACE_ID!;
-  const COMPUTE_ENV_ID = process.env.COMPUTE_ID!;
-  const WORK_DIR = process.env.WORK_DIR!;
+
   const methods = useForm({ mode: "onSubmit" });
 
   const [formData, setFormData] = useState<any>(null);
@@ -35,9 +33,6 @@ export default function RunWorkflowPage() {
       // if it's the final submit (in case 2)
       const fullPayload: WorkflowLaunchForm = {
         pipeline: "https://github.com/nextflow-io/hello",
-        workspaceId: WORKSPACE_ID,
-        computeEnvId: COMPUTE_ENV_ID,
-        workDir: WORK_DIR,
         runName: formToUse?.["run-name"] || "default-name",
         paramsText: formToUse,
         ...formToUse
