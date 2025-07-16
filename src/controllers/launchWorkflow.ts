@@ -15,19 +15,17 @@ export async function launchWorkflow(
       runName: form.runName || "hello-from-ui",
       pipeline: form.pipeline || "https://github.com/nextflow-io/hello",
       configProfiles: [],
-      paramsText: form.paramsText,
+      paramsText: JSON.stringify({}),
       resume: false
     })
   };
   const response = await fetch("/api/launch", request);
-  const data = await response.json();
-
   if (!response.ok) {
-    throw new Error(
-      `Fail to list workflow runs: ${response.status} ${data?.message || JSON.stringify(data)}`
-    );
+    const errorText = await response.text();
+    throw new Error(`Workflow launch failed: ${response.status} ${errorText}`);
   }
 
+  const data = await response.json();
   // assuming the API returns workflow ID as `workflowId`
-  return data.workflowId;
+  return data.data.workflowId;
 }
