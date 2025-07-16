@@ -48,46 +48,42 @@ export default function SideBarItems() {
     ]; 
 
     return (
-    <List>
+      <List>
         {navItems.map(({ href, icon, text, childs }) => (
-            <>
-            <Link
-              href={href}
-              passHref
-              underline="none"
-              key={href}
-              component={NextLink}
+          <>
+            <ListItemButton
+              onClick={() => {
+                router.push({
+                  pathname: href
+                });
+              }}
             >
-              <ListItemButton selected={router.pathname === href}>
-                <ListItemIcon>{icon}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </Link>
+              <ListItemIcon>{icon}</ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItemButton>
             {childs &&
               childs.map((child: string) => {
                 return (
                   // Generate themes list under Home
-                  <Link
-                    component={NextLink}
-                    href={child}
-                    passHref
-                    underline="none"
-                    key={child}
+                  <ListItemButton
+                    onClick={() => {
+                      router.push({
+                        pathname: "/workflowThemes",
+                        query: { id: child }
+                      });
+                    }}
                   >
-                    <ListItemButton selected={router.pathname === child}>
-                      <ListItemIcon></ListItemIcon>
-                      <ListItemText
-                        primary={child
-                          .replace(/_/g, " ")
-                          .replace(/\b\w/g, (char) => char.toUpperCase())}
-                      />
-                    </ListItemButton>
-                  </Link>
+                    <ListItemIcon></ListItemIcon>
+                    <ListItemText
+                      primary={child
+                        .replace(/_/g, " ")
+                        .replace(/\b\w/g, (char) => char.toUpperCase())}
+                    />
+                  </ListItemButton>
                 );
               })}
-            </>
+          </>
         ))}
-    </List>
-
+      </List>
     );
 }
