@@ -5,16 +5,11 @@ const BASE_URL = process.env.SEQERA_API_URL;
 const WORKSPACE_ID = process.env.WORKSPACE_ID;
 const token = process.env.SEQERA_ACCESS_TOKEN!;
 
-type ResponseData = {
-  workflowId: string;
-  message: string;
-};
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
+  res: NextApiResponse
 ) {
-  const { workspaceId, computeEnvId, workDir, runName, pipeline, paramsText } =
-    req.body;
+  const { workspaceId, computeEnvId, workDir, runName, pipeline } = req.body;
 
   const myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${token}`);
@@ -29,7 +24,7 @@ export default async function handler(
       workDir,
       workspaceId,
       revision: "master",
-      paramsText: JSON.stringify(paramsText),
+      paramsText: JSON.stringify({}),
       configProfiles: [],
       resume: false
     }
@@ -49,10 +44,7 @@ export default async function handler(
     );
 
     const data = await seqeraRes.json();
-    const workflowId = data?.data.workflowId;
-    res
-      .status(seqeraRes.status)
-      .send({ message: "Launched the workflow!", workflowId: workflowId });
+    res.status(seqeraRes.status).send({ data });
   } catch (error: any) {
     res.status(500).send(error);
   }
