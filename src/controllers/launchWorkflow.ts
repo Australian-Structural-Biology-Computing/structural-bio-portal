@@ -20,12 +20,14 @@ export async function launchWorkflow(
     })
   };
   const response = await fetch("/api/launch", request);
+  const data = await response.json();
+
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Workflow launch failed: ${response.status} ${errorText}`);
+    throw new Error(
+      `Fail to list workflow runs: ${response.status} ${data?.message || JSON.stringify(data)}`
+    );
   }
 
-  const data = await response.json();
   // assuming the API returns workflow ID as `workflowId`
-  return data.data.workflowId;
+  return data.workflowId;
 }
