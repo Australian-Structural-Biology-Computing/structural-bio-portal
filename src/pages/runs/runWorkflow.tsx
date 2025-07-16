@@ -39,9 +39,9 @@ export default function RunWorkflowPage() {
         computeEnvId: COMPUTE_ENV_ID,
         workDir: WORK_DIR,
         runName: formToUse?.["run-name"] || "default-name",
+        paramsText: formToUse,
         ...formToUse
       };
-
       const result = await launchWorkflow(fullPayload);
       console.log("Workflow launched successfully:", result);
       setRunId(result);
@@ -62,35 +62,39 @@ export default function RunWorkflowPage() {
       case 2:
         const submittedData = methods.watch();
         return (
-          <Box sx={{ width: "100%" }}>
-            <Stack
-              spacing={1}
-              alignContent="center"
-              sx={{
-                mb: 2,
-                justifyContent: "center",
-                alignItems: "flex-start"
-              }}
+          <FormProvider methods={methods}>
+            <form
+              onSubmit={methods.handleSubmit((data) => {
+                console.log("submitted: ", data);
+                handleSubmit(data);
+              })}
             >
-              {submittedData &&
-                Object.entries(submittedData).map(([key, value]) => (
-                  <ParamsSummary
-                    key={key}
-                    paramKey={key}
-                    value={value}
-                    onChange={(newVal) => methods.setValue(key, newVal)}
-                  />
-                ))}
-            </Stack>
-            <Button
-              variant="contained"
-              onClick={() => {
-                handleSubmit();
-              }}
-            >
-              Final Submit
-            </Button>
-          </Box>
+              <Box sx={{ width: "100%" }}>
+                <Stack
+                  spacing={1}
+                  alignContent="center"
+                  sx={{
+                    mb: 2,
+                    justifyContent: "center",
+                    alignItems: "flex-start"
+                  }}
+                >
+                  {submittedData &&
+                    Object.entries(submittedData).map(([key, value]) => (
+                      <ParamsSummary
+                        key={key}
+                        paramKey={key}
+                        value={value}
+                        onChange={(newVal) => methods.setValue(key, newVal)}
+                      />
+                    ))}
+                </Stack>
+                <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+                  Final Submit
+                </Button>
+              </Box>
+            </form>
+          </FormProvider>
         );
       default:
         return null;
