@@ -9,7 +9,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { workspaceId, computeEnvId, workDir, runName, pipeline } = req.body;
+  const { workspaceId, computeEnvId, workDir, runName, pipeline, paramsText } =
+    req.body;
 
   const myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${token}`);
@@ -24,7 +25,7 @@ export default async function handler(
       workDir,
       workspaceId,
       revision: "master",
-      paramsText: JSON.stringify({}),
+      paramsText: JSON.stringify(paramsText),
       configProfiles: [],
       resume: false
     }

@@ -7,19 +7,13 @@ export interface WorkflowLaunchForm {
   computeEnvId: string;
   workDir: string;
   runName: string;
+  revision: string;
+  configProfiles: string[];
+  paramsText: string;
+  resume: boolean | false;
 }
 export interface WorkflowLaunchPayload {
-  launch: {
-    pipeline: string;
-    workspaceId: string;
-    computeEnvId: string;
-    workDir: string;
-    runName: string;
-    revision: string;
-    configProfiles: string[];
-    paramsText: string;
-    resume: boolean;
-  };
+  launch: WorkflowLaunchForm;
 }
 // workflow input models
 export interface InputParams {
