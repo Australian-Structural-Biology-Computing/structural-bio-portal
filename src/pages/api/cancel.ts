@@ -27,7 +27,6 @@ export default async function handler(
   };
 
   const cancelURL = `${BASE_URL}/workflow/${workflowId}/cancel?workspaceId=${WORKSPACE_ID}`;
-  console.log("Request: ", cancelURL);
 
   try {
     const result = await fetch(cancelURL, request);

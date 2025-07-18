@@ -7,7 +7,7 @@ export interface WorkflowLaunchForm {
   computeEnvId: string;
   workDir: string;
   runName: string;
-  revision: string;
+  revision: string | "main";
   configProfiles: string[];
   paramsText: string;
   preRunScript: string | "module load nextflow";

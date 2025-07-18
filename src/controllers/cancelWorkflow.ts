@@ -6,6 +6,10 @@ export async function cancelWorkflow(workflowId: string) {
     },
     body: JSON.stringify({ workflowId })
   });
+  
+   if (response.status === 204) {
+     return "Workflow cancelled successfully.";
+   }
   const data = await response.json();
 
   if (!response.ok) {

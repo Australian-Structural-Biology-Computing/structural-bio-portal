@@ -8,7 +8,6 @@ import { RunInfo } from "@/models/workflow";
 import { cancelWorkflow } from "@/controllers/cancelWorkflow";
 
 export default function MyRuns() {
-
   const [runs, setRuns] = React.useState<RunInfo[]>([]);
 
   const fetchRuns = async () => {
@@ -25,11 +24,14 @@ export default function MyRuns() {
     }));
     setRuns(Runs);
   };
-  const handleCancel = (workflowId: string) => {
-    cancelWorkflow(workflowId);
-    fetchRuns();
+  const handleCancel = async (workflowId: string) => {
+    try {
+      await cancelWorkflow(workflowId);
+      await fetchRuns();
+    } catch (error) {
+      console.error("Cancel failed:", error);
+    }
   };
-
   React.useEffect(() => {
     fetchRuns();
   }, []);
