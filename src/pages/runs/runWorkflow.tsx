@@ -9,12 +9,17 @@ import { useForm } from "react-hook-form";
 import WorkflowParamsPage from "@/components/WorkflowParams";
 import ParamsSummary from "@/components/ParamsSummary";
 import { Box, Stack } from "@mui/system";
+import { useWorkflows } from "@/context/DBContext";
+import { useRouter } from "next/router";
 
 export default function RunWorkflowPage() {
-  const WORKSPACE_ID = process.env.NEXT_PUBLIC_WORKSPACE_ID!;
-  const COMPUTE_ENV_ID = process.env.NEXT_PUBLIC_COMPUTE_ID!;
-  const WORK_DIR = process.env.NEXT_PUBLIC_WORK_DIR!;
   const methods = useForm({ mode: "onSubmit" });
+  const context = useWorkflows();
+  const workflows = context?.workflows;
+  const params = useRouter();
+  const workflowId = Number(params?.query?.id);
+  const workflow = workflows?.find((wf) => wf.id === workflowId);
+  console.log("worklflow: ", workflow);
 
   const [formData, setFormData] = useState<any>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">(
@@ -34,10 +39,9 @@ export default function RunWorkflowPage() {
       setFormData(formToUse);
       // if it's the final submit (in case 2)
       const fullPayload: WorkflowLaunchForm = {
-        pipeline: "https://github.com/nextflow-io/hello",
-        workspaceId: WORKSPACE_ID,
-        computeEnvId: COMPUTE_ENV_ID,
-        workDir: WORK_DIR,
+        pipeline: workflow?.github,
+        revision: workflow?.revision,
+        configProfiles: workflow?.configProfiles,
         runName: formToUse?.["run-name"] || "default-name",
         paramsText: formToUse,
         ...formToUse

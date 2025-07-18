@@ -1,16 +1,22 @@
-export async function cancelWorkflow(workflowId: string): Promise<string> {
-    
-    const response = await fetch("/api/cancel", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json"
-      },
-      body: JSON.stringify({ workflowId })
-    });
-    if (!response.ok) {
-        const errorMess = await response.text()
-        throw new Error(`Fail to cancel workflow id: ${workflowId}: ${response.status} ${errorMess}`)
-    }
+export async function cancelWorkflow(workflowId: string) {
+  const response = await fetch("/api/cancel", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json"
+    },
+    body: JSON.stringify({ workflowId })
+  });
+  
+   if (response.status === 204) {
+     return "Workflow cancelled successfully.";
+   }
+  const data = await response.json();
 
-    return response.json();
+  if (!response.ok) {
+    throw new Error(
+      `Fail to list workflow runs: ${response.status} ${data?.message || JSON.stringify(data)}`
+    );
+  }
+
+  return data.message;
 }
