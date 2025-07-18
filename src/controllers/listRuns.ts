@@ -26,6 +26,5 @@ export async function listRuns(): Promise<RawRunInfo[]> {
   const userWorkflows: RawRunInfo[] = workflows.filter(
     (wf: RawRunInfo) => wf?.workflow?.ownerId === userId
   );
-  console.log("workflows list: ", userWorkflows);
   return userWorkflows;
 }

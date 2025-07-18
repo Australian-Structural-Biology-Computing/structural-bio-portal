@@ -10,6 +10,7 @@ export interface WorkflowLaunchForm {
   revision: string;
   configProfiles: string[];
   paramsText: string;
+  preRunScript: string | "module load nextflow";
   resume: boolean | false;
 }
 export interface WorkflowLaunchPayload {
@@ -72,6 +73,8 @@ export interface Workflows {
   title: string;
   description: string;
   github: string;
+  revision: string | "main";
+  configProfiles: string[] | [];
   schema: string;
   keywords: string[];
   theme: string;

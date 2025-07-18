@@ -11,7 +11,7 @@ const token = process.env.SEQERA_ACCESS_TOKEN!;
     req: NextApiRequest,
     res: NextApiResponse
   ) {
-    const { runName, pipeline } = req.body;
+    const { runName, pipeline, revision, configProfiles } = req.body;
 
     const myHeaders = new Headers();
     myHeaders.append("Authorization", `Bearer ${token}`);
@@ -25,9 +25,10 @@ const token = process.env.SEQERA_ACCESS_TOKEN!;
         pipeline,
         workDir: WORK_DIR,
         workspaceId: WORKSPACE_ID,
-        revision: "master",
+        revision,
         paramsText: JSON.stringify({}),
-        configProfiles: [],
+        configProfiles,
+        preRunScript: "module load nextflow",
         resume: false
       }
     };
