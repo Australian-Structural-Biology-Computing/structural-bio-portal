@@ -1,6 +1,6 @@
 import StepperLayout from "@/components/StepperLayout";
 import WorkflowLauncher from "@/components/WorkflowLauncher";
-import { Button, Typography } from "@mui/material";
+import { Alert, Button, CircularProgress, Typography } from "@mui/material";
 import { WorkflowLaunchForm } from "@/models/workflow";
 import { launchWorkflow } from "@/controllers/launchWorkflow";
 import { useState } from "react";
@@ -16,8 +16,8 @@ export default function RunWorkflowPage() {
   const methods = useForm({ mode: "onSubmit" });
   const context = useWorkflows();
   const workflows = context?.workflows;
-  const params = useRouter();
-  const workflowId = Number(params?.query?.id);
+  const router = useRouter();
+  const workflowId = Number(router?.query?.id);
   const workflow = workflows?.find((wf) => wf.id === workflowId);
   console.log("worklflow: ", workflow);
 
@@ -50,7 +50,7 @@ export default function RunWorkflowPage() {
       console.log("Workflow launched successfully:", result);
       setRunId(result);
       setStatus("done");
-      console.log("runId: ", runID);
+      setTimeout(() => router.push({ pathname: "/jobs" }), 3000);
     } catch (error: any) {
       console.error("Launch failed:", error);
       setStatus("error");
@@ -59,17 +59,19 @@ export default function RunWorkflowPage() {
 
   const stepContent = (step: number) => {
     switch (step) {
+      //step 1: input-output options
       case 0:
         return <WorkflowLauncher methods={methods} onSubmit={handleSubmit} />;
+      //step 2: workflow params
       case 1:
         return <WorkflowParamsPage methods={methods} onSubmit={handleSubmit} />;
+      //step 3: summary
       case 2:
         const submittedData = methods.watch();
         return (
           <FormProvider methods={methods}>
             <form
               onSubmit={methods.handleSubmit((data) => {
-                console.log("submitted: ", data);
                 handleSubmit(data);
               })}
             >
@@ -106,13 +108,34 @@ export default function RunWorkflowPage() {
   };
 
   return (
-    <FormProvider {...{ methods }}>
-      <StepperLayout
-        steps={["Job Info", "Input Parameters", "Review & Launch"]}
-        stepContent={stepContent}
-      />
-      {status === "done" && <Typography>Launched {runID}</Typography>}
-      {status === "error" && <Typography color="error.main">Error</Typography>}
-    </FormProvider>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+    >
+      {status === "idle" && (
+        <FormProvider {...{ methods }}>
+          <StepperLayout
+            steps={["Job Info", "Input Parameters", "Review & Launch"]}
+            stepContent={stepContent}
+          />{" "}
+        </FormProvider>
+      )}
+      {status === "loading" && (
+        <>
+          <CircularProgress />
+          <Typography variant="body1">Your job is submitting...</Typography>
+        </>
+      )}
+      {status === "done" && (
+        <Alert severity="success">
+          Successfully launched workflow ID: {runID}
+        </Alert>
+      )}
+      {status === "error" && (
+        <Alert severity="error">Some errors happened!</Alert>
+      )}
+    </Box>
   );
 }
