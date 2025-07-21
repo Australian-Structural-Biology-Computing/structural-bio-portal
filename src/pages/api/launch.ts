@@ -27,7 +27,7 @@ const token = process.env.SEQERA_ACCESS_TOKEN!;
         workDir: WORK_DIR,
         workspaceId: WORKSPACE_ID,
         revision,
-        paramsText: JSON.stringify(paramsText),
+        paramsText: paramsText,
         configProfiles,
         preRunScript: "module load nextflow",
         resume: false

@@ -96,6 +96,7 @@ export default function ParamAccordionGroup({
                   helperText={param.description}
                   sx={{ mb: 2 }}
                   size="small"
+                  type={param.type === "integer" ? "number" : "text"}
                 />
               );
           }
