@@ -48,6 +48,8 @@ export interface RawTool {
   github: string;
   schema: string;
   keywords: string[];
+  revision: string | "main";
+  configProfiles: string[];
 }
 
 export interface RawWorkflowGroup {
@@ -55,7 +57,6 @@ export interface RawWorkflowGroup {
   github: string;
   schema: string;
   keywords: string[];
-  all_in_one: boolean | false;
   tools?: RawTool[];
 }
 
