@@ -27,6 +27,7 @@ export default function RunWorkflowPage() {
     "idle"
   );
   const [runID, setRunId] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const [wParams, setWParams] = useState<WorkflowParams>({});
 
   useEffect(() => {
@@ -75,6 +76,7 @@ export default function RunWorkflowPage() {
     } catch (error: any) {
       console.error("Launch failed:", error);
       setStatus("error");
+      setErrorMsg(error);
     }
   };
 
@@ -151,11 +153,15 @@ export default function RunWorkflowPage() {
       )}
       {status === "done" && (
         <Alert severity="success">
-          Successfully launched workflow ID: {runID}
+          Successfully launched workflow ID: {runID}! Re-directing to the job
+          list...
         </Alert>
       )}
       {status === "error" && (
-        <Alert severity="error">Some errors happened!</Alert>
+        <Alert severity="error">
+          Error:{" "}
+          {typeof errorMsg === "string" ? errorMsg : "Something went wrong!"}
+        </Alert>
       )}
     </Box>
   );
