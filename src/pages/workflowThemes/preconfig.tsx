@@ -34,7 +34,7 @@ export default function PreConfigWorkflows() {
               onClick={() => {
                 setSelectedCard(index);
                 router.push({
-                  pathname: "runs/runWorkflow",
+                  pathname: "/runs/runWorkflow",
                   query: { id: workflow.id }
                 });
               }}
