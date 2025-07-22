@@ -1,25 +1,49 @@
 import StepperLayout from "@/components/StepperLayout";
 import WorkflowLauncher from "@/components/WorkflowLauncher";
-import DragDropUploader from "@/components/DragDropUploader";
-import { Button, Typography } from "@mui/material";
-import { WorkflowLaunchForm } from "@/models/workflow";
+import { Alert, Button, CircularProgress, Typography } from "@mui/material";
+import { WorkflowLaunchForm, WorkflowParams } from "@/models/workflow";
 import { launchWorkflow } from "@/controllers/launchWorkflow";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FormProvider from "@/components/form/FormProvider";
 import { useForm } from "react-hook-form";
+import WorkflowParamsPage from "@/components/WorkflowParams";
+import ParamsSummary from "@/components/ParamsSummary";
+import { Box, Stack } from "@mui/system";
+import { useWorkflows } from "@/context/DBContext";
+import { useRouter } from "next/router";
+import { convertFormData } from "@/utils/convertFormData";
+import { parseWorkflowSchema } from "@/utils/parseWorkflowSchema";
 
 export default function RunWorkflowPage() {
-  const WORKSPACE_ID = process.env.NEXT_PUBLIC_WORKSPACE_ID!;
-  const COMPUTE_ENV_ID = process.env.NEXT_PUBLIC_COMPUTE_ID!;
-  const WORK_DIR = process.env.NEXT_PUBLIC_WORK_DIR!;
   const methods = useForm({ mode: "onSubmit" });
+  const context = useWorkflows();
+  const workflows = context?.workflows;
+  const router = useRouter();
+  const workflowId = Number(router?.query?.id);
+  const workflow = workflows?.find((wf) => wf.id === workflowId);
 
-  const [formData, setFormData] = useState<any>(null);
+  const [formData, setFormData] = useState<WorkflowLaunchForm>();
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">(
     "idle"
   );
   const [runID, setRunId] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [wParams, setWParams] = useState<WorkflowParams>({});
 
+  useEffect(() => {
+    if (!workflow?.schema) return;
+
+    const loadParams = async () => {
+      try {
+        const parsed = await parseWorkflowSchema(workflow.schema);
+        setWParams(parsed);
+      } catch (error) {
+        console.error("Error loading workflow schema:", error);
+      }
+    };
+
+    loadParams();
+  }, [workflow?.schema]);
   const handleSubmit = async (data?: any) => {
     try {
       setStatus("loading");
@@ -29,48 +53,77 @@ export default function RunWorkflowPage() {
         setStatus("idle");
         return;
       }
-      setFormData(formToUse);
+      // setFormData(formToUse);
+      const convertedParams = convertFormData(formToUse, wParams);
+
+      // setFormData(convertedParams);
       // if it's the final submit (in case 2)
       const fullPayload: WorkflowLaunchForm = {
-        pipeline: "https://github.com/nextflow-io/hello",
-        workspaceId: WORKSPACE_ID,
-        computeEnvId: COMPUTE_ENV_ID,
-        workDir: WORK_DIR,
-        runName: formToUse?.["run-name"] || "default-name",
+        pipeline: workflow?.github || "",
+        revision: workflow?.revision || "",
+        configProfiles: workflow?.configProfiles || [""],
+        runName: convertedParams?.["runName"] || "default-name",
+        paramsText: JSON.stringify({
+          ...convertedParams
+        }),
         ...formToUse
       };
-
       const result = await launchWorkflow(fullPayload);
       console.log("Workflow launched successfully:", result);
       setRunId(result);
       setStatus("done");
-      console.log("runId: ", runID);
+      setTimeout(() => router.push({ pathname: "/jobs" }), 3000);
     } catch (error: any) {
       console.error("Launch failed:", error);
       setStatus("error");
+      setErrorMsg(error);
     }
   };
 
   const stepContent = (step: number) => {
     switch (step) {
+      //step 1: input-output options
       case 0:
-        return <WorkflowLauncher methods={methods} onSubmit={handleSubmit} />;
+        return <WorkflowLauncher methods={methods} />;
+      //step 2: workflow params
       case 1:
-        return <DragDropUploader />;
+        return <WorkflowParamsPage methods={methods} />;
+      //step 3: summary
       case 2:
+        const submittedData = methods.watch();
         return (
-          <>
-            <Typography variant="h6">Review</Typography>
-            <Typography>Ready to launch your job.</Typography>
-            <Button
-              variant="contained"
-              onClick={() => {
-                handleSubmit();
-              }}
+          <FormProvider methods={methods}>
+            <form
+              onSubmit={methods.handleSubmit((data) => {
+                handleSubmit(data);
+              })}
             >
-              Final Submit
-            </Button>
-          </>
+              <Box sx={{ width: "100%" }}>
+                <Stack
+                  spacing={1}
+                  alignContent="center"
+                  sx={{
+                    mb: 2,
+                    justifyContent: "center",
+                    alignItems: "flex-start"
+                  }}
+                >
+                  {submittedData &&
+                    Object.entries(submittedData).map(([key, value]) => (
+                      <ParamsSummary
+                        key={key}
+                        paramKey={key}
+                        value={value}
+                        onChange={(newVal) => methods.setValue(key, newVal)}
+                      />
+                    ))}
+                </Stack>
+                <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+                  Final Submit
+                </Button>
+              </Box>
+            </form>
+          </FormProvider>
         );
       default:
         return null;
@@ -78,13 +131,38 @@ export default function RunWorkflowPage() {
   };
 
   return (
-    <FormProvider {...{ methods }}>
-      <StepperLayout
-        steps={["Job Info", "Input Parameters", "Review & Launch"]}
-        stepContent={stepContent}
-      />
-      {status === "done" && <Typography>Launched {runID}</Typography>}
-      {status === "error" && <Typography color="error.main">Error</Typography>}
-    </FormProvider>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+    >
+      {status === "idle" && (
+        <FormProvider {...{ methods }}>
+          <StepperLayout
+            steps={["Job Info", "Input Parameters", "Review & Launch"]}
+            stepContent={stepContent}
+          />{" "}
+        </FormProvider>
+      )}
+      {status === "loading" && (
+        <>
+          <CircularProgress />
+          <Typography variant="body1">Your job is submitting...</Typography>
+        </>
+      )}
+      {status === "done" && (
+        <Alert severity="success">
+          Successfully launched workflow ID: {runID}! Re-directing to the job
+          list...
+        </Alert>
+      )}
+      {status === "error" && (
+        <Alert severity="error">
+          Error:{" "}
+          {typeof errorMsg === "string" ? errorMsg : "Something went wrong!"}
+        </Alert>
+      )}
+    </Box>
   );
 }

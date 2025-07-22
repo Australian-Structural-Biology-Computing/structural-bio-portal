@@ -37,7 +37,9 @@ function transformWorkflows(data: RawDB[]): Workflows[] {
         return (subcatValue.tools || []).map((tool: RawTool) => ({
           ...tool,
           theme: categoryName,
-          preconfig: subcatName
+          preconfig: subcatName,
+          revision: tool.revision,
+          configProfiles: tool.configProfiles
         }));
       })
     );
