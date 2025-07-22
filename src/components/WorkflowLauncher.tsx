@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Checkbox,
-  FormControlLabel,
-  MenuItem,
-  FormControl,
-  FormHelperText
-} from "@mui/material";
+import { Checkbox, FormControlLabel, MenuItem } from "@mui/material";
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { useRouter } from "next/router";
@@ -14,15 +8,8 @@ import { useWorkflows } from "@/context/DBContext";
 import FTextField from "@/components/form/FTextField";
 import FormProvider from "@/components/form/FormProvider";
 import { InputParams, WorkflowInputSchema } from "@/models/workflow";
-import DragDropUploader from "./DragDropUploader";
 
-export default function WorkflowLauncher({
-  onSubmit,
-  methods
-}: {
-  onSubmit: (formValues: any) => void;
-  methods: UseFormReturn<any>;
-}) {
+export default function WorkflowLauncher({ methods }: { methods: UseFormReturn<any> }) {
   const context = useWorkflows();
   const workflows = context?.workflows;
   const params = useRouter();
@@ -65,76 +52,56 @@ export default function WorkflowLauncher({
 
   return (
     <FormProvider methods={methods}>
-      <form
-        onSubmit={methods.handleSubmit((data) => {
-          console.log("submitted: ", data);
-          onSubmit(data);
-        })}
-      >
-        <FTextField
-          required
-          name="run-name"
-          label="Job Name"
-          helperText="Name your workflow"
-          size="small"
-        />
-        {inputParams.map((param) => {
-          switch (param.type) {
-            case "boolean":
-              return (
-                <FormControlLabel
-                  key={param.key}
-                  control={<Checkbox name={param.key} />}
-                  label={param.key}
-                  sx={{ mb: 1 }}
-                />
-              );
-            default:
-              if (param.enum.length > 0) {
-                return (
-                  <FTextField
-                    key={param.key}
-                    name={param.key}
-                    label={
-                      param.key.charAt(0).toUpperCase() + param.key.slice(1)
-                    }
-                    select
-                    helperText={param.help_text}
-                    size="small"
-                    sx={{ mb: 2 }}
-                  >
-                    {param.enum.map((option) => (
-                      <MenuItem key={option} value={option}>
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </FTextField>
-                );
-              }
-              if (param.key === "input") {
-                return (
-                  <FormControl>
-                    <label>
-                      {param.key.charAt(0).toUpperCase() + param.key.slice(1)}
-                    </label>
-                    <FormHelperText>{param.help_text}</FormHelperText>
-                    <DragDropUploader />
-                  </FormControl>
-                );
-              }
+      <FTextField
+        required
+        name="runName"
+        label="Job Name"
+        helperText="Name your workflow"
+        size="small"
+      />
+      {inputParams.map((param) => {
+        switch (param.type) {
+          case "boolean":
+            return (
+              <FormControlLabel
+                key={param.key}
+                control={<Checkbox name={param.key} />}
+                label={param.key}
+                sx={{ mb: 1 }}
+              />
+            );
+          default:
+            if (param.enum.length > 0) {
               return (
                 <FTextField
                   key={param.key}
                   name={param.key}
                   label={param.key.charAt(0).toUpperCase() + param.key.slice(1)}
+                  select
                   helperText={param.help_text}
-                  sx={{ mb: 2 }}
                   size="small"
-                />
+                  sx={{ mb: 2 }}
+                >
+                  {param.enum.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </FTextField>
               );
-          }
-        })}
-      </form>
+            }
+            return (
+              <FTextField
+                key={param.key}
+                name={param.key}
+                label={param.key.charAt(0).toUpperCase() + param.key.slice(1)}
+                helperText={param.help_text}
+                sx={{ mb: 2 }}
+                size="small"
+              />
+            );
+        }
+      })}
     </FormProvider>
   );
 }
