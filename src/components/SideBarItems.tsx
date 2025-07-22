@@ -62,6 +62,7 @@ export default function SideBarItems() {
             childs.map((child: string) => {
               return (
                 <ListItemButton
+                  key={child}
                   onClick={() => {
                     router.push({
                       pathname: "/workflowThemes/workflowThemes",

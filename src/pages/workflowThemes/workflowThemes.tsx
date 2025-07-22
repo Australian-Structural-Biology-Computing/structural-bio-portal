@@ -4,10 +4,10 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import CardActionArea from "@mui/material/CardActionArea";
-import { CardHeader, CardMedia, Chip } from "@mui/material";
+import { CardHeader, CardMedia } from "@mui/material";
 import { useRouter } from "next/router";
 import { useWorkflows } from "@/context/DBContext";
-import { PreconfigContext, ThemesContext, Workflows } from "@/models/workflow";
+import { PreconfigContext, ThemesContext } from "@/models/workflow";
 
 export default function PreConfigWorkflows() {
     const router = useRouter();

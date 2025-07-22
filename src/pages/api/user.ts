@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const BASE_URL = process.env.SEQERA_API_URL;
-const WORKSPACE_ID = process.env.WORKSPACE_ID;
 const token = process.env.SEQERA_ACCESS_TOKEN!;
 
 type ResponseData = {

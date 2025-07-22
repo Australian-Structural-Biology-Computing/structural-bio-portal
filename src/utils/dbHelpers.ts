@@ -11,17 +11,15 @@ function extractThemes(data: RawDB[]): ThemesContext[] {
   const allEntries: ThemesContext[] = [];
 
   data.forEach((themeObj) => {
-    const entries = Object.entries(themeObj).map(
-      ([eKey, value]: [string, RawThemes]) => {
-        const preconfigKeys = value.preconfig.flatMap((p) => Object.keys(p));
-        allEntries.push({
-          [eKey]: {
-            key: preconfigKeys.join(","),
-            description: value.description
-          }
-        });
-      }
-    );
+    Object.entries(themeObj).map(([eKey, value]: [string, RawThemes]) => {
+      const preconfigKeys = value.preconfig.flatMap((p) => Object.keys(p));
+      allEntries.push({
+        [eKey]: {
+          key: preconfigKeys.join(","),
+          description: value.description
+        }
+      });
+    });
   });
   return allEntries;
 }
