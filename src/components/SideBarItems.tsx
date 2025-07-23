@@ -53,8 +53,8 @@ export default function SideBarItems() {
   return (
     <List>
       {navItems.map(({ href, icon, text, childs }) => (
-        <>
-          <ListItemButton selected={router.pathname === href}>
+        <div key={href}>
+          <ListItemButton onClick={() => router.push({ pathname: href })}>
             <ListItemIcon>{icon}</ListItemIcon>
             <ListItemText primary={text} />
           </ListItemButton>
@@ -79,7 +79,7 @@ export default function SideBarItems() {
                 </ListItemButton>
               );
             })}
-        </>
+        </div>
       ))}
     </List>
   );
