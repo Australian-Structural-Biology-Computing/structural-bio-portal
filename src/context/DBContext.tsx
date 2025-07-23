@@ -6,7 +6,10 @@ import {
 } from "@/models/workflow";
 import fetchWorkflowsFromDB from "@/utils/dbHelpers";
 
-const DBContext = createContext<WorkflowContextType | undefined>(undefined);
+const DBContext = createContext<WorkflowContextType>({
+  workflows: [],
+  themes: []
+});
 export const WorkflowsProvider = ({
   children
 }: {

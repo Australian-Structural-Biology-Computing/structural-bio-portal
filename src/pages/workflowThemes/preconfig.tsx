@@ -11,11 +11,12 @@ import { useWorkflows } from "@/context/DBContext";
 
 export default function PreConfigWorkflows() {
   const router = useRouter();
-  const themesId = router?.query?.id;
+  const themesId = router.query.id;
   const [selectedCard, setSelectedCard] = React.useState(0);
 
   const context = useWorkflows();
-  const allWorkflows = context?.workflows;
+  const allWorkflows = context.workflows;
+
   const workflows = allWorkflows
     ? allWorkflows.filter((wf) => wf.preconfig === themesId)
     : [];

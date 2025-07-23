@@ -17,9 +17,9 @@ import { parseWorkflowSchema } from "@/utils/parseWorkflowSchema";
 export default function RunWorkflowPage() {
   const methods = useForm({ mode: "onSubmit" });
   const context = useWorkflows();
-  const workflows = context?.workflows;
+  const workflows = context.workflows;
   const router = useRouter();
-  const workflowId = Number(router?.query?.id);
+  const workflowId = Number(router.query.id);
   const workflow = workflows?.find((wf) => wf.id === workflowId);
 
   const [formData, setFormData] = useState<WorkflowLaunchForm>();

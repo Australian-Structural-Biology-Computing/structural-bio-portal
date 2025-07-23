@@ -14,9 +14,9 @@ export default function PreConfigWorkflows() {
     const [selectedCard, setSelectedCard] = React.useState<string>("");
 
     const context = useWorkflows();
-    const themes = context?.themes;
-  
-    const themesId = router?.query?.id;
+    const themes = context.themes;
+
+    const themesId = router.query.id;
     // Get theme info from theme query
     const theme = themes?.find(
       (t: ThemesContext) => Object.keys(t)[0] === themesId
