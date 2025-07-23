@@ -1,13 +1,14 @@
 
 import { launchDetails } from "@/controllers/launchDetails";
-import { LaunchDetails } from "@/models/workflow";
-import { Typography } from "@mui/material";
+import { LaunchDetails, LaunchLogs } from "@/models/workflow";
 import { Box } from "@mui/system";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Settings from "@/components/results/Settings";
+import Logs from "@/components/results/Logs";
+import { launchLog } from "@/controllers/launchLogs";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -41,19 +42,21 @@ export default function ResultsPage() {
   const router = useRouter();
   const id = router?.query?.id;
   const workflowId = Array.isArray(id) ? id[0] : id;
-  const [launchInfo, setLaunchInfo] = useState<LaunchDetails>();
+  const [, setLaunchInfo] = useState<LaunchDetails>();
   const [params, setParams] = useState<Record<string, any>>();
+  const [logs, setLogs] = useState<LaunchLogs>();
 
   useEffect(() => {
     if (!workflowId) return;
     const fetchLaunchDetails = async () => {
       const res: LaunchDetails = await launchDetails(workflowId);
+      const resLogs: LaunchLogs = await launchLog(workflowId);
       setLaunchInfo(res);
       setParams(res.params);
+      setLogs(resLogs);
     };
     fetchLaunchDetails();
   }, [workflowId]);
-
   const [value, setValue] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -85,7 +88,7 @@ export default function ResultsPage() {
         <Settings configText={params} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}>
-        Logs
+        <Logs log={logs} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={4}>
         Citation

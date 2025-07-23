@@ -304,3 +304,19 @@ export interface LaunchDetails {
   configFiles: string[];
   params: Record<string, any>;
 }
+
+export interface LaunchLogs {
+  truncated: boolean;
+  entries: string[];
+  rewindToken: string;
+  forwardToken: string;
+  pending: boolean;
+  message: string;
+  downloads: [
+    {
+      saveName: string;
+      fileName: string;
+      displayText: string;
+    }
+  ];
+}
