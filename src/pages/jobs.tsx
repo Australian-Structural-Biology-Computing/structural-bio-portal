@@ -18,12 +18,12 @@ export default function MyRuns() {
   const fetchRuns = async () => {
     const result = await listRuns();
     const Runs: RunInfo[] = result.map((run) => ({
-      id: run?.workflow.id,
-      run: run?.workflow.runName,
-      workflow: run?.workflow.repository
-        ? run?.workflow.repository
-        : run?.workflow.projectName,
-      status: run?.workflow.status,
+      id: run.workflow.id,
+      run: run.workflow.runName,
+      workflow: run.workflow.repository
+        ? run.workflow.repository
+        : run.workflow.projectName,
+      status: run.workflow.status,
       date: new Date(run?.workflow.dateCreated).toLocaleString(),
       cancel: ""
     }));

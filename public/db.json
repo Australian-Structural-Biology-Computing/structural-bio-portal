@@ -6,8 +6,6 @@
         {
           "hotspot-guided binder design": {
             "description": "Lorem ipsum dolor sit amet, consectetur blorbital elementum. Fusce sapien velit, ultricies non snacktorum eget, fringilla bibendum dravicus. Nunc vel plumbus arcu, sed eleifend nulla. Blaz morbit integer felis in taciti venenatis.",
-            "github": "",
-            "schema": "",
             "tools": [
               {
                 "id": 1,
@@ -17,14 +15,6 @@
                 "configProfiles": ["gadi"],
                 "revision": "dev",
                 "schema": "https://raw.githubusercontent.com/Australian-Structural-Biology-Computing/bindflow/refs/heads/main/nextflow_schema.json",
-                "keywords": ["Protein design", "Antibody design", "Drug design"]
-              },
-              {
-                "id": 2,
-                "title": "nf-protein-design",
-                "description": "Lorem ipsum dolor sit amet, consectetur blorbital elementum. Fusce sapien velit, ultricies non snacktorum eget, fringilla bibendum dravicus. Nunc vel plumbus arcu, sed eleifend nulla. Blaz morbit integer felis in taciti venenatis.",
-                "github": "",
-                "schema": "",
                 "keywords": ["Protein design", "Antibody design", "Drug design"]
               }
             ]
@@ -39,49 +29,37 @@
       "preconfig": [
         {
           "single_structure_prediction": {
-            "id": 3,
             "description": "nf-core/proteinfold is a bioinformatics best-practice analysis pipeline for Protein 3D structure prediction pipeline.\nThe pipeline is built using Nextflow, a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The Nextflow DSL2 implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from nf-core/modules in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!",
-            "github": "https://github.com/nf-core/proteinfold.git",
-            "schema": "https://raw.githubusercontent.com/nf-core/proteinfold/refs/tags/1.0.0/nextflow_schema.json",
-            "keywords": ["Protein design", "Antibody design", "Drug design"],
             "tools": [
               {
                 "id": 4,
                 "title": "alphafold2",
                 "description": "",
-                "github": "",
-                "schema": ""
+                "github": "https://github.com/nf-core/proteinfold.git",
+                "schema": "https://raw.githubusercontent.com/nf-core/proteinfold/refs/tags/1.0.0/nextflow_schema.json"
               },
               {
                 "id": 5,
                 "title": "colabfold",
                 "description": "",
-                "github": "",
-                "schema": ""
+                "github": "https://github.com/nf-core/proteinfold.git",
+                "schema": "https://raw.githubusercontent.com/nf-core/proteinfold/refs/tags/1.0.0/nextflow_schema.json"
               },
               {
                 "id": 6,
                 "title": "esmfold",
                 "description": "",
-                "github": "",
-                "schema": ""
+                "github": "https://github.com/nf-core/proteinfold.git",
+                "schema": "https://raw.githubusercontent.com/nf-core/proteinfold/refs/tags/1.0.0/nextflow_schema.json"
               }
             ]
           },
           "interaction_screening": {
-            "id": 7,
-            "description": "Lorem ipsum dolor sit amet, consectetur blorbital elementum. Fusce sapien velit, ultricies non snacktorum eget, fringilla bibendum dravicus. Nunc vel plumbus arcu, sed eleifend nulla. Blaz morbit integer felis in taciti venenatis.",
-            "github": "",
-            "schema": "",
-            "keywords": ["Protein design", "Antibody design", "Drug design"],
+            "description": "nf-core/proteinfold is a bioinformatics best-practice analysis pipeline for Protein 3D structure prediction pipeline.\nThe pipeline is built using Nextflow, a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The Nextflow DSL2 implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from nf-core/modules in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!",
             "tools": []
           },
           "stoichiometry_scan": {
-            "id": 10,
-            "description": "Lorem ipsum dolor sit amet, consectetur blorbital elementum. Fusce sapien velit, ultricies non snacktorum eget, fringilla bibendum dravicus. Nunc vel plumbus arcu, sed eleifend nulla. Blaz morbit integer felis in taciti venenatis.",
-            "github": "",
-            "schema": "",
-            "keywords": ["Protein design", "Antibody design", "Drug design"],
+            "description": "nf-core/proteinfold is a bioinformatics best-practice analysis pipeline for Protein 3D structure prediction pipeline.\nThe pipeline is built using Nextflow, a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The Nextflow DSL2 implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from nf-core/modules in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!",
             "tools": []
           }
         }

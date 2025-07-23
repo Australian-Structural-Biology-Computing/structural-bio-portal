@@ -47,6 +47,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           anchor="right"
           variant="temporary"
           open={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
           sx={{
             width: drawerWidth,
             flexShrink: 0,

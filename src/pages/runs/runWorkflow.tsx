@@ -17,9 +17,9 @@ import { parseWorkflowSchema } from "@/utils/parseWorkflowSchema";
 export default function RunWorkflowPage() {
   const methods = useForm({ mode: "onSubmit" });
   const context = useWorkflows();
-  const workflows = context?.workflows;
+  const workflows = context.workflows;
   const router = useRouter();
-  const workflowId = Number(router?.query?.id);
+  const workflowId = Number(router.query.id);
   const workflow = workflows?.find((wf) => wf.id === workflowId);
 
   const [formData] = useState<WorkflowLaunchForm>();
@@ -137,30 +137,41 @@ export default function RunWorkflowPage() {
       alignItems="center"
       justifyContent="center"
     >
-      {status === "idle" && (
-        <FormProvider {...{ methods }}>
-          <StepperLayout
-            steps={["Job Info", "Input Parameters", "Review & Launch"]}
-            stepContent={stepContent}
-          />{" "}
-        </FormProvider>
-      )}
-      {status === "loading" && (
+      {workflow ? (
         <>
-          <CircularProgress />
-          <Typography variant="body1">Your job is submitting...</Typography>
+          {status === "idle" && (
+            <FormProvider {...{ methods }}>
+              <StepperLayout
+                steps={["Job Info", "Input Parameters", "Review & Launch"]}
+                stepContent={stepContent}
+              />{" "}
+            </FormProvider>
+          )}
+          {status === "loading" && (
+            <>
+              <CircularProgress />
+              <Typography variant="body1">Your job is submitting...</Typography>
+            </>
+          )}
+          {status === "done" && (
+            <Alert severity="success">
+              Successfully launched workflow ID: {runID}! Re-directing to the
+              job list...
+            </Alert>
+          )}
+          {status === "error" && (
+            <Alert severity="error">
+              Error:{" "}
+              {typeof errorMsg === "string"
+                ? errorMsg
+                : "Something went wrong!"}
+            </Alert>
+          )}
         </>
-      )}
-      {status === "done" && (
-        <Alert severity="success">
-          Successfully launched workflow ID: {runID}! Re-directing to the job
-          list...
-        </Alert>
-      )}
-      {status === "error" && (
+      ) : (
         <Alert severity="error">
-          Error:{" "}
-          {typeof errorMsg === "string" ? errorMsg : "Something went wrong!"}
+          There is no pre-config workflow available now. Please try another
+          pre-config workflow group!
         </Alert>
       )}
     </Box>
