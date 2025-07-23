@@ -1,34 +1,95 @@
 
 import { launchDetails } from "@/controllers/launchDetails";
+import { LaunchDetails } from "@/models/workflow";
 import { Typography } from "@mui/material";
-import { Box} from "@mui/system";
+import { Box } from "@mui/system";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Settings from "@/components/results/Settings";
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function CustomTabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`id-${index}`}
+      aria-labelledby={`label-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `id-${index}`,
+    "aria-controls": `label-${index}`
+  };
+}
 
 export default function ResultsPage() {
   const router = useRouter();
-  const id = router?.query?.id
+  const id = router?.query?.id;
   const workflowId = Array.isArray(id) ? id[0] : id;
-
-    const [details, setDetails] = useState<any>(null);
-
+  const [launchInfo, setLaunchInfo] = useState<LaunchDetails>();
+  const [params, setParams] = useState<Record<string, any>>();
 
   useEffect(() => {
     if (!workflowId) return;
-
-    launchDetails(workflowId)
-      .then((res) => setDetails(res))
-      .catch((err) => console.error("Error loading launch details", err));
+    const fetchLaunchDetails = async () => {
+      const res: LaunchDetails = await launchDetails(workflowId);
+      setLaunchInfo(res);
+      setParams(res.params);
+    };
+    fetchLaunchDetails();
   }, [workflowId]);
 
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-    >
-          <Typography>{workflowId}</Typography>
+    <Box sx={{ width: "100%", height: "100vh" }}>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          aria-label="basic tabs example"
+        >
+          <Tab label="Results" {...a11yProps(0)} />
+          <Tab label="Files" {...a11yProps(1)} />
+          <Tab label="Settings" {...a11yProps(2)} />
+          <Tab label="Logs" {...a11yProps(3)} />
+          <Tab label="Citation" {...a11yProps(4)} />
+        </Tabs>
+      </Box>
+      <CustomTabPanel value={value} index={0}>
+        Results
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={1}>
+        Files
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={2}>
+        <Settings configText={params} />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={3}>
+        Logs
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={4}>
+        Citation
+      </CustomTabPanel>
     </Box>
   );
 }

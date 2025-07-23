@@ -132,8 +132,8 @@ export interface RawRunInfo {
       icon: string;
     };
     nextflow: {
-      version: string; //max 20chars
-      build: string; // Constraints: max 10 chars
+      version: string;
+      build: string;
       timestamp: string;
     };
     stats: {
@@ -268,5 +268,39 @@ export interface RunInfo {
   workflow: string;
   status: string;
   date: string;
-  cancel: string
+  cancel: string;
+}
+
+export interface LaunchDetails {
+  requiresAttention: boolean;
+  status: string[];
+  Allowed:
+    | "SUBMITTED"
+    | "RUNNING"
+    | "SUCCEEDED"
+    | "FAILED"
+    | "CANCELLED"
+    | "UNKNOWN";
+  ownerId: number;
+  repository: string;
+  id: string;
+  submit: string;
+  start: string;
+  complete: string;
+  dateCreated: string;
+  lastUpdated: string;
+  runName: string;
+  sessionId: string;
+  profile: string;
+  workDir: string;
+  commitId: string;
+  userName: string;
+  scriptId: string;
+  revision: string;
+  commandLine: string;
+  projectName: string;
+  scriptName: string;
+  launchId: string;
+  configFiles: string[];
+  params: Record<string, any>;
 }

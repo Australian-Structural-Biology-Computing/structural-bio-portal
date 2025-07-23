@@ -1,6 +1,8 @@
+import { LaunchDetails } from "@/models/workflow";
 
-export async function launchDetails(workflowId: string): Promise<Record<string, any>> {
-
+export async function launchDetails(
+  workflowId: string
+): Promise<LaunchDetails> {
   const response = await fetch(`/api/launchDetails?workflowId=${workflowId}`, {
     method: "GET"
   });
@@ -13,6 +15,6 @@ export async function launchDetails(workflowId: string): Promise<Record<string, 
     );
   }
 
-  const workflows = data.launch;
+  const workflows = await data.workflows;
   return workflows;
 }
