@@ -6,7 +6,7 @@ const WORKSPACE_ID = process.env.WORKSPACE_ID;
 const token = process.env.SEQERA_ACCESS_TOKEN!;
 
 type ResponseData = {
-    log: LaunchLogs | [];
+  log: LaunchLogs | [];
   message: string;
 };
 

@@ -9,6 +9,7 @@ import Tab from "@mui/material/Tab";
 import Settings from "@/components/results/Settings";
 import Logs from "@/components/results/Logs";
 import { launchLog } from "@/controllers/launchLogs";
+import { Alert, CircularProgress, Typography } from "@mui/material";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -45,15 +46,26 @@ export default function ResultsPage() {
   const [, setLaunchInfo] = useState<LaunchDetails>();
   const [params, setParams] = useState<Record<string, any>>();
   const [logs, setLogs] = useState<LaunchLogs>();
+  const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">(
+    "idle"
+  );
+  const [errorMsg, setErrorMsg] = useState<string>("");
 
   useEffect(() => {
     if (!workflowId) return;
     const fetchLaunchDetails = async () => {
-      const res: LaunchDetails = await launchDetails(workflowId);
-      const resLogs: LaunchLogs = await launchLog(workflowId);
-      setLaunchInfo(res);
-      setParams(res.params);
-      setLogs(resLogs);
+      try {
+        setStatus("loading");
+        const res: LaunchDetails = await launchDetails(workflowId);
+        const resLogs: LaunchLogs = await launchLog(workflowId);
+        setLaunchInfo(res);
+        setParams(res.params);
+        setLogs(resLogs);
+        setStatus("done");
+      } catch (error: any) {
+        setStatus("error");
+        setErrorMsg(error);
+      }
     };
     fetchLaunchDetails();
   }, [workflowId]);
@@ -78,21 +90,43 @@ export default function ResultsPage() {
           <Tab label="Citation" {...a11yProps(4)} />
         </Tabs>
       </Box>
-      <CustomTabPanel value={value} index={0}>
-        Results
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
-        Files
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
-        <Settings configText={params} />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={3}>
-        <Logs log={logs} />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={4}>
-        Citation
-      </CustomTabPanel>
+      {status === "done" && (
+        <>
+          <CustomTabPanel value={value} index={0}>
+            Results
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={1}>
+            Files
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={2}>
+            {params && <Settings configText={params} />}
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={3}>
+            {logs && <Logs log={logs} />}
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={4}>
+            Citation
+          </CustomTabPanel>
+        </>
+      )}
+      {status === "loading" && (
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          padding={3}
+        >
+          <CircularProgress />
+          <Typography variant="body1">Loading you job details...</Typography>
+        </Box>
+      )}
+      {status === "error" && (
+        <Alert severity="error">
+          Error:{" "}
+          {typeof errorMsg === "string" ? errorMsg : "Something went wrong!"}
+        </Alert>
+      )}
     </Box>
   );
 }
