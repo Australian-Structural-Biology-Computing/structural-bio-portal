@@ -10,6 +10,8 @@ import Settings from "@/components/results/Settings";
 import Logs from "@/components/results/Logs";
 import { launchLog } from "@/controllers/launchLogs";
 import { Alert, CircularProgress, Typography } from "@mui/material";
+import Files from "@/components/results/Files";
+import { downloadFile } from "@/controllers/downloadFile";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -46,6 +48,7 @@ export default function ResultsPage() {
   const [, setLaunchInfo] = useState<LaunchDetails>();
   const [params, setParams] = useState<Record<string, any>>();
   const [logs, setLogs] = useState<LaunchLogs>();
+  const [file, setFile] = useState<any>();
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">(
     "idle"
   );
@@ -58,9 +61,11 @@ export default function ResultsPage() {
         setStatus("loading");
         const res: LaunchDetails = await launchDetails(workflowId);
         const resLogs: LaunchLogs = await launchLog(workflowId);
+        // const resFile: any = await downloadFile(workflowId);
         setLaunchInfo(res);
         setParams(res.params);
         setLogs(resLogs);
+        // setFile(resFile);
         setStatus("done");
       } catch (error: any) {
         setStatus("error");
@@ -93,10 +98,11 @@ export default function ResultsPage() {
       {status === "done" && (
         <>
           <CustomTabPanel value={value} index={0}>
-            Results
+            MultiQC Report
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
-            Files
+            <Typography variant="h4">Binder</Typography>
+            <Files file={file} />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
             {params && <Settings configText={params} />}
