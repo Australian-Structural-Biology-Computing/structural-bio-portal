@@ -5,7 +5,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import CardActionArea from "@mui/material/CardActionArea";
-import { CardHeader, CardMedia, Chip } from "@mui/material";
+import { Alert, CardHeader, CardMedia, Chip } from "@mui/material";
 import { useRouter } from "next/router";
 import { useWorkflows } from "@/context/DBContext";
 
@@ -16,8 +16,10 @@ export default function PreConfigWorkflows() {
 
   const context = useWorkflows();
   const allWorkflows = context?.workflows;
-  console.log(allWorkflows);
-  const workflows = allWorkflows ? allWorkflows.filter((wf) => wf.preconfig === themesId) : [];
+  const workflows = allWorkflows
+    ? allWorkflows.filter((wf) => wf.preconfig === themesId)
+    : [];
+  console.log(workflows);
   return (
     <Box
       sx={{
@@ -27,7 +29,7 @@ export default function PreConfigWorkflows() {
         gap: 2
       }}
     >
-      {workflows &&
+      {workflows.length > 0 ? (
         workflows.map((workflow, index) => (
           <Card sx={{ maxWidth: 500 }} key={workflow.id}>
             <CardActionArea
@@ -74,7 +76,13 @@ export default function PreConfigWorkflows() {
               </CardContent>
             </CardActionArea>
           </Card>
-        ))}
+        ))
+      ) : (
+        <Alert severity="error">
+          There is no workflow available! Please choose other pre-config
+          workflows group!
+        </Alert>
+      )}
     </Box>
   );
 }
