@@ -1,14 +1,19 @@
 'use client';
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowParams } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
 import { listRuns } from "@/controllers/listRuns";
 import { RunInfo } from "@/models/workflow";
 import { cancelWorkflow } from "@/controllers/cancelWorkflow";
+import Router from "next/router";
 
 export default function MyRuns() {
   const [runs, setRuns] = React.useState<RunInfo[]>([]);
+  const handleRowClick = (params: GridRowParams) => {
+    const id = params.row.id;
+    Router.push({ pathname: "/jobs/results", query: { id: id } });
+  };
 
   const fetchRuns = async () => {
     const result = await listRuns();
@@ -85,6 +90,7 @@ export default function MyRuns() {
       <DataGrid
         rows={runs}
         columns={columns}
+        onRowClick={handleRowClick}
         initialState={{
           pagination: {
             paginationModel: {

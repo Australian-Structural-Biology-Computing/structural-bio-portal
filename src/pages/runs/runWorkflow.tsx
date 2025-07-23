@@ -22,7 +22,7 @@ export default function RunWorkflowPage() {
   const workflowId = Number(router.query.id);
   const workflow = workflows?.find((wf) => wf.id === workflowId);
 
-  const [formData, setFormData] = useState<WorkflowLaunchForm>();
+  const [formData] = useState<WorkflowLaunchForm>();
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">(
     "idle"
   );
