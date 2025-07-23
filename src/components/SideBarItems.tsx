@@ -5,7 +5,6 @@ import {
   ListItemText
 } from "@mui/material";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import DeviceHubOutlinedIcon from "@mui/icons-material/DeviceHubOutlined";
 import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import InsertInvitationOutlinedIcon from "@mui/icons-material/InsertInvitationOutlined";
@@ -13,22 +12,24 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 import ContactSupportOutlinedIcon from "@mui/icons-material/ContactSupportOutlined";
 import { useRouter } from "next/router";
 import { useWorkflows } from "@/context/DBContext";
+import { ThemesContext } from "@/models/workflow";
+import { useMemo } from "react";
 
 export default function SideBarItems() {
   const router = useRouter();
   const context = useWorkflows();
-  const themes = context?.themes;
+
+  const themes = useMemo(() => {
+    return context?.themes.flatMap((theme: ThemesContext) =>
+      Object.keys(theme)
+    );
+  }, [context?.themes]);
   const navItems = [
     {
       href: "/",
       text: "Home",
       icon: <HomeOutlinedIcon />,
       childs: themes
-    },
-    {
-      href: "/preconfig",
-      icon: <DeviceHubOutlinedIcon />,
-      text: "Pre-config Workflow"
     },
     { href: "/jobs", icon: <WorkOutlineOutlinedIcon />, text: "Jobs" },
     { href: "/about", icon: <InfoOutlinedIcon />, text: "About" },
@@ -52,27 +53,19 @@ export default function SideBarItems() {
   return (
     <List>
       {navItems.map(({ href, icon, text, childs }) => (
-        <>
-          <ListItemButton
-            key={href}
-            onClick={() => {
-              router.push({
-                pathname: href
-              });
-            }}
-          >
+        <div key={href}>
+          <ListItemButton onClick={() => router.push({ pathname: href })}>
             <ListItemIcon>{icon}</ListItemIcon>
             <ListItemText primary={text} />
           </ListItemButton>
           {childs &&
             childs.map((child: string) => {
               return (
-                // Generate themes list under Home
                 <ListItemButton
                   key={child}
                   onClick={() => {
                     router.push({
-                      pathname: "/workflowThemes",
+                      pathname: "/workflowThemes/workflowThemes",
                       query: { id: child }
                     });
                   }}
@@ -86,7 +79,7 @@ export default function SideBarItems() {
                 </ListItemButton>
               );
             })}
-        </>
+        </div>
       ))}
     </List>
   );
