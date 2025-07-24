@@ -25,10 +25,6 @@ export default function MyRuns() {
   const [openDialog, setOpenDialog] = React.useState(false);
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
   const [errorMsg, setErrorMsg] = React.useState("");
-  const handleRowClick = (params: GridRowParams) => {
-    const id = params.row.id;
-    Router.push({ pathname: "/jobs/results", query: { id: id } });
-  };
 
   const fetchRuns = async () => {
     const result = await listRuns();
@@ -109,7 +105,6 @@ export default function MyRuns() {
           <DataGrid
             rows={runs}
             columns={columns}
-            onRowClick={handleRowClick}
             initialState={{
               pagination: {
                 paginationModel: {
