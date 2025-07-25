@@ -36,21 +36,24 @@
                 "title": "alphafold2",
                 "description": "",
                 "github": "https://github.com/nf-core/proteinfold.git",
-                "schema": "https://raw.githubusercontent.com/nf-core/proteinfold/refs/tags/1.0.0/nextflow_schema.json"
+                "schema": "https://raw.githubusercontent.com/nf-core/proteinfold/refs/tags/1.0.0/nextflow_schema.json",
+                "revision": "master"
               },
               {
                 "id": 5,
                 "title": "colabfold",
                 "description": "",
                 "github": "https://github.com/nf-core/proteinfold.git",
-                "schema": "https://raw.githubusercontent.com/nf-core/proteinfold/refs/tags/1.0.0/nextflow_schema.json"
+                "schema": "https://raw.githubusercontent.com/nf-core/proteinfold/refs/tags/1.0.0/nextflow_schema.json",
+                "revision": "master"
               },
               {
                 "id": 6,
                 "title": "esmfold",
                 "description": "",
                 "github": "https://github.com/nf-core/proteinfold.git",
-                "schema": "https://raw.githubusercontent.com/nf-core/proteinfold/refs/tags/1.0.0/nextflow_schema.json"
+                "schema": "https://raw.githubusercontent.com/nf-core/proteinfold/refs/tags/1.0.0/nextflow_schema.json",
+                "revision": "master"
               }
             ]
           },

@@ -14,7 +14,7 @@ export async function cancelWorkflow(workflowId: string) {
 
   if (!response.ok) {
     throw new Error(
-      `Fail to list workflow runs: ${response.status} ${data?.message || JSON.stringify(data)}`
+      `Fail to cancel workflow: ${response.status} ${data?.message || JSON.stringify(data)}`
     );
   }
 
