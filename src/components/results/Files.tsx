@@ -1,8 +1,7 @@
 import {Card, CardContent, CardMedia } from "@mui/material";
 import { Box } from "@mui/system";
 
-export default function Files({ file }: { file: any }) {
-  const htmlUrl="/sample_report.html"
+export default function Files({ file }: { file: string }) {
   return (
     <Box
       sx={{
@@ -15,7 +14,7 @@ export default function Files({ file }: { file: any }) {
     >
       <Box
         component="iframe"
-        src={htmlUrl}
+        src={file}
         title="HTML Report"
         sx={{
           position: "absolute",

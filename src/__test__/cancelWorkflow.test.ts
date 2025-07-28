@@ -32,7 +32,7 @@ describe("cancelWorkflow", () => {
       .mockResolvedValue(new Response(JSON.stringify(body), { status: 404 }));
 
     await expect(cancelWorkflow(workflowId)).rejects.toThrow(
-      "Fail to list workflow runs: 404 Workflow not found"
+      "Fail to cancel workflow: 404 Workflow not found"
     );
   });
 

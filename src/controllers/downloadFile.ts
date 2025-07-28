@@ -14,6 +14,5 @@ export async function downloadFile(
     );
   }
 
-  const log = await data.log;
-  return log;
+  return data;
 }

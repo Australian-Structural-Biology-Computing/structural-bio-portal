@@ -12,6 +12,7 @@ import { launchLog } from "@/controllers/launchLogs";
 import { Alert, CircularProgress, Typography } from "@mui/material";
 import Files from "@/components/results/Files";
 import { downloadFile } from "@/controllers/downloadFile";
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -40,7 +41,6 @@ function a11yProps(index: number) {
     "aria-controls": `label-${index}`
   };
 }
-
 export default function ResultsPage() {
   const router = useRouter();
   const id = router?.query?.id;
@@ -48,7 +48,8 @@ export default function ResultsPage() {
   const [, setLaunchInfo] = useState<LaunchDetails>();
   const [params, setParams] = useState<Record<string, any>>();
   const [logs, setLogs] = useState<LaunchLogs>();
-  const [file, setFile] = useState<any>();
+  const [resultFile, setResultFile] = useState<any>();
+  const [files, setFiles] = useState<any>();
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">(
     "idle"
   );
@@ -61,11 +62,14 @@ export default function ResultsPage() {
         setStatus("loading");
         const res: LaunchDetails = await launchDetails(workflowId);
         const resLogs: LaunchLogs = await launchLog(workflowId);
-        // const resFile: any = await downloadFile(workflowId);
+        const files = await downloadFile(workflowId);
+        const resultReport = files.result;
+        const filesToDownload = files.files;
         setLaunchInfo(res);
         setParams(res.params);
         setLogs(resLogs);
-        // setFile(resFile);
+        setResultFile(resultReport);
+        setFiles(filesToDownload);
         setStatus("done");
       } catch (error: any) {
         setStatus("error");
@@ -98,11 +102,12 @@ export default function ResultsPage() {
       {status === "done" && (
         <>
           <CustomTabPanel value={value} index={0}>
-            MultiQC Report
+            <Files file={resultFile} />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
             <Typography variant="h4">Binder</Typography>
-            <Files file={file} />
+            <Files file="/sample_report.html" />
+            <Files file={files} />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
             {params && <Settings configText={params} />}

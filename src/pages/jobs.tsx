@@ -19,18 +19,17 @@ import Router from "next/router";
 
 export default function MyRuns() {
   const [runs, setRuns] = React.useState<RunInfo[]>([]);
-  const [status, setStatus] = React.useState<
+  const [loadingStatus, setLoadingStatus] = React.useState<
     "idle" | "loading" | "done" | "error"
   >("idle");
   const [canceling, setCanceling] = React.useState(false);
   const [openDialog, setOpenDialog] = React.useState(false);
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
   const [errorMsg, setErrorMsg] = React.useState("");
-  const handleRowClick = (params: GridRowParams) => {
-    const id = params.row.id;
-    Router.push({ pathname: "/jobs/results", query: { id: id } });
-  };
-
+const handleRowClick = (params: GridRowParams) => {
+  const id = params.row.id;
+  Router.push({ pathname: "/jobs/results", query: { id: id } });
+};
   const fetchRuns = async () => {
     const result = await listRuns();
     const Runs: RunInfo[] = result.map((run) => ({
@@ -47,7 +46,19 @@ export default function MyRuns() {
   };
 
   React.useEffect(() => {
-    fetchRuns();
+    const loadData = async () => {
+      setLoadingStatus("loading");
+      try {
+        await fetchRuns();
+        setLoadingStatus("done");
+      } catch (error) {
+        console.error("Failed to fetch runs:", error);
+        setErrorMsg("Failed to load workflow runs.");
+        setLoadingStatus("error");
+      }
+    };
+
+    loadData();
   }, []);
 
   const columns: GridColDef<RunInfo>[] = [
@@ -98,14 +109,16 @@ export default function MyRuns() {
   ];
   return (
     <Box sx={{ height: "80vh", width: "100%" }}>
-      <Backdrop
-        open={canceling}
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>{" "}
-      {status === "error" && <Alert>Error: {errorMsg}</Alert>}
-      {(status === "idle" || "done") && (
+      {loadingStatus === "loading" && (
+        <Backdrop
+          open={true}
+          sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      )}
+      {loadingStatus === "error" && <Alert>Error: {errorMsg}</Alert>}
+      {["idle", "done"].includes(loadingStatus) && (
         <>
           <DataGrid
             rows={runs}
@@ -135,10 +148,10 @@ export default function MyRuns() {
                     try {
                       await cancelWorkflow(selectedId);
                       await fetchRuns();
-                      setStatus("done");
+                      setLoadingStatus("done");
                     } catch (error) {
                       console.error("Cancel failed:", error);
-                      setStatus("error");
+                      setLoadingStatus("error");
                       setErrorMsg(`ERROR: ${error}`);
                     } finally {
                       setSelectedId(null);
@@ -147,6 +160,7 @@ export default function MyRuns() {
                     }
                   }
                 }}
+                loading={canceling}
                 color="info"
               >
                 Yes, Cancel
