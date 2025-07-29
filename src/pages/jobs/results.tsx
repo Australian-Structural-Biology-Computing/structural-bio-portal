@@ -45,10 +45,10 @@ export default function ResultsPage() {
   const router = useRouter();
   const id = router?.query?.id;
   const workflowId = Array.isArray(id) ? id[0] : id;
-  const [params, setParams] = useState<Record<string, any>>();
+  const [params, setParams] = useState<Record<string, string>>();
   const [logs, setLogs] = useState<LaunchLogs>();
-  const [resultFile, setResultFile] = useState<any>();
-  const [files, setFiles] = useState<any>();
+  const [resultFile, setResultFile] = useState<string>("");
+  const [files, setFiles] = useState<string[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">(
     "idle"
   );

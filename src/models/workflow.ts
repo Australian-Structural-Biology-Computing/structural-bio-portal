@@ -304,7 +304,7 @@ export interface LaunchDetails {
   scriptName: string;
   launchId: string;
   configFiles: string[];
-  params: Record<string, any>;
+  params: Record<string, string>;
 }
 
 export interface LaunchLogs {

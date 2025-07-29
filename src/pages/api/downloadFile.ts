@@ -5,8 +5,8 @@ const REGION = process.env.AWS_REGION!;
 const BUCKET_NAME = process.env.S3_BUCKET!;
 const S3_BASE_URL = process.env.S3_URL!;
 // Get the public output files from S3 bucket
-type ResponseData = {
-  result?: string;
+export type ResponseData = {
+  result: string;
   files: string[];
   message: string;
 };

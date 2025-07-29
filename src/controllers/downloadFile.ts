@@ -1,7 +1,6 @@
+import type { ResponseData } from "@/pages/api/downloadFile";
 
-export async function downloadFile(
-  workflowId: string
-): Promise<any> {
+export async function downloadFile(workflowId: string): Promise<ResponseData> {
   const response = await fetch(`/api/downloadFile?workflowId=${workflowId}`, {
     method: "GET"
   });
@@ -10,7 +9,7 @@ export async function downloadFile(
 
   if (!response.ok) {
     throw new Error(
-      `Fail to get launch log files: ${response.status} ${data?.message || JSON.stringify(data)}`
+      `Fail to download file from S3: ${response.status} ${data?.message || JSON.stringify(data)}`
     );
   }
 
