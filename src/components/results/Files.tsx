@@ -1,4 +1,3 @@
-import {Card, CardContent, CardMedia } from "@mui/material";
 import { Box } from "@mui/system";
 
 export default function Files({ file }: { file: string }) {

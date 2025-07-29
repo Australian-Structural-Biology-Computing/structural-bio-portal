@@ -105,7 +105,7 @@ export default function ResultsPage() {
           <CustomTabPanel value={value} index={1}>
             {files &&
               files.length > 0 &&
-              files.map((file: string) => <Files file={file} />)}
+              files.map((file: string) => <Files key={file} file={file} />)}
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
             {params && <Settings configText={params} />}
