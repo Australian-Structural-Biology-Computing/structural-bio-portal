@@ -15,6 +15,7 @@ import {
 import { listRuns } from "@/controllers/listRuns";
 import { RunInfo } from "@/models/workflow";
 import { cancelWorkflow } from "@/controllers/cancelWorkflow";
+import Router from "next/router";
 
 export default function MyRuns() {
   const [runs, setRuns] = React.useState<RunInfo[]>([]);
@@ -25,7 +26,10 @@ export default function MyRuns() {
   const [openDialog, setOpenDialog] = React.useState(false);
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
   const [errorMsg, setErrorMsg] = React.useState("");
-
+const handleRowClick = (params: GridRowParams) => {
+  const id = params.row.id;
+  Router.push({ pathname: "/jobs/results", query: { id: id } });
+};
   const fetchRuns = async () => {
     const result = await listRuns();
     const Runs: RunInfo[] = result.map((run) => ({
@@ -119,6 +123,7 @@ export default function MyRuns() {
           <DataGrid
             rows={runs}
             columns={columns}
+            onRowClick={handleRowClick}
             initialState={{
               pagination: {
                 paginationModel: {
