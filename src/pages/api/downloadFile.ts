@@ -4,7 +4,7 @@ import { S3Client, ListObjectsV2Command } from "@aws-sdk/client-s3";
 const REGION = process.env.AWS_REGION!;
 const BUCKET_NAME = process.env.S3_BUCKET!;
 const S3_BASE_URL = process.env.S3_URL!;
-
+// Get the public output files from S3 bucket
 type ResponseData = {
   result?: string;
   files: string[];
@@ -32,26 +32,43 @@ export default async function handler(
     });
 
     const response = await s3.send(command);
-    const contents = response.Contents ?? [];
+    // avoid getting "folders"
+    const contents = (response.Contents ?? []).filter(
+      (obj) => obj.Key && !obj.Key.endsWith("/")
+    );
 
-    const htmlFile = contents.find((obj) => obj.Key?.endsWith(".html"));
+    // display multiqc report in results tab, the others are in files tab
+    const htmlFile = contents.find((obj) => obj.Key === "multiqc_report.html");
+    // other files except multiqc_report.html
     const filesToDownload = contents
-      .filter((obj) => obj.Key && !obj.Key.endsWith(".html"))
+      .filter((obj) => obj.Key && obj.Key !== "multiqc_report.html")
       .map((obj) => `${S3_BASE_URL}/${obj.Key}`);
 
-    if (!htmlFile || !htmlFile.Key) {
+    if (!htmlFile && !filesToDownload) {
       return res
         .status(404)
-        .json({ message: "No .html file found", result: "", files: [] });
+        .json({ message: "No output files found!", result: "", files: [] });
+    } else if (htmlFile && !filesToDownload) {
+      const fileUrl = `${S3_BASE_URL}/${htmlFile.Key}`;
+      return res.status(200).json({
+        message: "Results: found 1. Files to download: 0",
+        result: fileUrl,
+        files: []
+      });
+    } else if (!htmlFile && filesToDownload) {
+      return res.status(200).json({
+        message: "No multiqc_report.html found!",
+        result: "",
+        files: filesToDownload
+      });
+    } else {
+      const fileUrl = `${S3_BASE_URL}/${htmlFile?.Key}`;
+      return res.status(200).json({
+        message: "Found HTML file and output files to download",
+        result: fileUrl,
+        files: filesToDownload
+      });
     }
-
-    const fileUrl = `${S3_BASE_URL}/${htmlFile.Key}`;
-
-    return res.status(200).json({
-      message: "Found HTML file",
-      result: fileUrl,
-      files: filesToDownload
-    });
   } catch (error) {
     console.error("Error listing S3 files: ", error);
     return res

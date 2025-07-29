@@ -17,6 +17,7 @@
     "@mui/x-data-grid": "^8.0.0-beta.3",
     "@toolpad/core": "^0.16.0",
     "axios": "^1.10.0",
+    "client-s3": "github:aws-sdk/client-s3",
     "next": "15.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

@@ -45,7 +45,6 @@ export default function ResultsPage() {
   const router = useRouter();
   const id = router?.query?.id;
   const workflowId = Array.isArray(id) ? id[0] : id;
-  const [, setLaunchInfo] = useState<LaunchDetails>();
   const [params, setParams] = useState<Record<string, any>>();
   const [logs, setLogs] = useState<LaunchLogs>();
   const [resultFile, setResultFile] = useState<any>();
@@ -65,7 +64,6 @@ export default function ResultsPage() {
         const files = await downloadFile(workflowId);
         const resultReport = files.result;
         const filesToDownload = files.files;
-        setLaunchInfo(res);
         setParams(res.params);
         setLogs(resLogs);
         setResultFile(resultReport);
@@ -83,7 +81,7 @@ export default function ResultsPage() {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-
+  console.log("files here: ", files);
   return (
     <Box sx={{ width: "100%", height: "100vh" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -105,9 +103,9 @@ export default function ResultsPage() {
             <Files file={resultFile} />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
-            <Typography variant="h4">Binder</Typography>
-            <Files file="/sample_report.html" />
-            <Files file={files} />
+            {files &&
+              files.length > 0 &&
+              files.map((file: string) => <Files file={file} />)}
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
             {params && <Settings configText={params} />}
