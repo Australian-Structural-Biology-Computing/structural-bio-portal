@@ -39,23 +39,24 @@ export default async function handler(
 
     // display multiqc report in results tab, the others are in files tab
     const htmlFile = contents.find((obj) => obj.Key === "multiqc_report.html");
+
     // other files except multiqc_report.html
     const filesToDownload = contents
       .filter((obj) => obj.Key && obj.Key !== "multiqc_report.html")
       .map((obj) => `${S3_BASE_URL}/${obj.Key}`);
 
-    if (!htmlFile && !filesToDownload) {
+    if (!htmlFile && filesToDownload.length === 0) {
       return res
         .status(404)
         .json({ message: "No output files found!", result: "", files: [] });
-    } else if (htmlFile && !filesToDownload) {
+    } else if (htmlFile && filesToDownload.length === 0) {
       const fileUrl = `${S3_BASE_URL}/${htmlFile.Key}`;
       return res.status(200).json({
         message: "Results: found 1. Files to download: 0",
         result: fileUrl,
         files: []
       });
-    } else if (!htmlFile && filesToDownload) {
+    } else if (!htmlFile && filesToDownload.length > 0) {
       return res.status(200).json({
         message: "No multiqc_report.html found!",
         result: "",
