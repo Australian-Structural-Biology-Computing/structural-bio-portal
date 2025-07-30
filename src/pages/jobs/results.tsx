@@ -127,7 +127,7 @@ export default function ResultsPage() {
           padding={3}
         >
           <CircularProgress />
-          <Typography variant="body1">Loading you job details...</Typography>
+          <Typography variant="body1">Loading your job details...</Typography>
         </Box>
       )}
       {status === "error" && (
