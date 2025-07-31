@@ -1,5 +1,5 @@
 import { launchDetails } from "@/controllers/launchDetails";
-import { LaunchDetails, LaunchLogs } from "@/models/workflow";
+import { LaunchLogs } from "@/models/workflow";
 import { Box } from "@mui/system";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -67,7 +67,7 @@ export default function ResultsPage() {
       .then((res) => {
         setStatusLaunch("loading");
         setParams(res.params);
-        setStatusLaunch((prev) => (params ? "done" : prev));
+        setStatusLaunch("done");
       })
       .catch((error) => {
         setStatusLaunch("error");
@@ -78,7 +78,7 @@ export default function ResultsPage() {
       .then((resLogs) => {
         setStatusLog("loading");
         setLogs(resLogs);
-        setStatusLog((prev) => (logs ? "done" : prev));
+        setStatusLog("done");
       })
       .catch((error) => {
         setStatusLog("error");
@@ -97,6 +97,7 @@ export default function ResultsPage() {
         setErrorMsg(error?.message || "Failed to load files");
       });
   }, [workflowId]);
+
   const [value, setValue] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -114,7 +115,7 @@ export default function ResultsPage() {
       <Typography variant="body1">Loading you job details...</Typography>
     </Box>
   );
-  console.log("status: ", statusLaunch, statusLogs, statusFiles);
+
   return (
     <Box sx={{ width: "100%", height: "100vh" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -146,7 +147,7 @@ export default function ResultsPage() {
         {statusFiles === "loading" && <LoadingElement />}
         {statusFiles === "done" &&
           files.length > 0 &&
-          files.map((file: string) => <Files file={file} />)}
+          files.map((file: string) => <Files file={file} key={file} />)}
         {statusFiles === "done" && files.length === 0 && (
           <Box sx={{ padding: 3 }}>
             <Typography variant="body1">
