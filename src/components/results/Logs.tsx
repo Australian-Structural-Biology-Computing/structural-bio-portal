@@ -20,7 +20,7 @@ export default function Logs({ log }: { log: LaunchLogs }) {
             whiteSpace: "pre-wrap"
           }}
         >
-          {logContent}
+          <pre>{logContent}</pre>
         </Box>
       )}
     </>

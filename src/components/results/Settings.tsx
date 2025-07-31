@@ -18,7 +18,7 @@ export default function Settings({
       }}
     >
       {Object.entries(configText).map(([key, value]) => (
-        <Typography key={key}>
+        <Typography key={key} fontFamily={"monospace"}>
           {key}: {String(value)}
         </Typography>
       ))}
