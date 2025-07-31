@@ -49,39 +49,73 @@ export default function ResultsPage() {
   const [logs, setLogs] = useState<LaunchLogs>();
   const [resultFile, setResultFile] = useState<any>();
   const [files, setFiles] = useState<any>();
-  const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">(
-    "idle"
-  );
+  const [statusLaunch, setStatusLaunch] = useState<
+    "idle" | "loading" | "done" | "error"
+  >("loading");
+  const [statusLogs, setStatusLog] = useState<
+    "idle" | "loading" | "done" | "error"
+  >("loading");
+  const [statusFiles, setStatusFiles] = useState<
+    "idle" | "loading" | "done" | "error"
+  >("loading");
+  const isAnyError = [statusLaunch, statusLogs, statusFiles].includes("error");
   const [errorMsg, setErrorMsg] = useState<string>("");
 
   useEffect(() => {
     if (!workflowId) return;
-    const fetchLaunchDetails = async () => {
-      try {
-        setStatus("loading");
-        const res: LaunchDetails = await launchDetails(workflowId);
-        const resLogs: LaunchLogs = await launchLog(workflowId);
-        const files = await downloadFile(workflowId);
-        const resultReport = files.result;
-        const filesToDownload = files.files;
+
+    launchDetails(workflowId)
+      .then((res) => {
+        setStatusLaunch("loading");
         setParams(res.params);
+        setStatusLaunch((prev) => (params ? "done" : prev));
+      })
+      .catch((error) => {
+        setStatusLaunch("error");
+        setErrorMsg(error?.message || "Failed to load launch details");
+      });
+
+    launchLog(workflowId)
+      .then((resLogs) => {
+        setStatusLog("loading");
         setLogs(resLogs);
-        setResultFile(resultReport);
-        setFiles(filesToDownload);
-        setStatus("done");
-      } catch (error: any) {
-        setStatus("error");
-        setErrorMsg(error);
-      }
-    };
-    fetchLaunchDetails();
+        setStatusLog((prev) => (logs ? "done" : prev));
+      })
+      .catch((error) => {
+        setStatusLog("error");
+        setErrorMsg(error?.message || "Failed to load logs");
+      });
+
+    downloadFile(workflowId)
+      .then((fileRes) => {
+        setStatusFiles("loading");
+        setResultFile(fileRes.result);
+        setFiles(fileRes.files);
+        setStatusFiles("done");
+      })
+      .catch((error) => {
+        setStatusFiles("error");
+        setErrorMsg(error?.message || "Failed to load files");
+      });
   }, [workflowId]);
   const [value, setValue] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-  console.log("files here: ", files);
+  const LoadingElement = () => (
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      padding={3}
+    >
+      <CircularProgress />
+      <Typography variant="body1">Loading you job details...</Typography>
+    </Box>
+  );
+  console.log("status: ", statusLaunch, statusLogs, statusFiles);
   return (
     <Box sx={{ width: "100%", height: "100vh" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -97,40 +131,43 @@ export default function ResultsPage() {
           <Tab label="Citation" {...a11yProps(4)} />
         </Tabs>
       </Box>
-      {status === "done" && (
-        <>
-          <CustomTabPanel value={value} index={0}>
-            <Files file={resultFile} />
-          </CustomTabPanel>
-          <CustomTabPanel value={value} index={1}>
-            {files &&
-              files.length > 0 &&
-              files.map((file: string) => <Files file={file} />)}
-          </CustomTabPanel>
-          <CustomTabPanel value={value} index={2}>
-            {params && <Settings configText={params} />}
-          </CustomTabPanel>
-          <CustomTabPanel value={value} index={3}>
-            {logs && <Logs log={logs} />}
-          </CustomTabPanel>
-          <CustomTabPanel value={value} index={4}>
-            Citation
-          </CustomTabPanel>
-        </>
-      )}
-      {status === "loading" && (
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          padding={3}
-        >
-          <CircularProgress />
-          <Typography variant="body1">Loading you job details...</Typography>
-        </Box>
-      )}
-      {status === "error" && (
+
+      <CustomTabPanel value={value} index={0}>
+        {statusFiles === "loading" && <LoadingElement />}
+        {statusFiles === "done" && resultFile && <Files file={resultFile} />}
+        {statusFiles === "done" && !resultFile && (
+          <Box sx={{ padding: 3 }}>
+            <Typography variant="body1">
+              No result file found for this workflow.
+            </Typography>
+          </Box>
+        )}
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={1}>
+        {statusFiles === "loading" && <LoadingElement />}
+        {statusFiles === "done" &&
+          files.length > 0 &&
+          files.map((file: string) => <Files file={file} />)}
+        {statusFiles === "done" && files.length === 0 && (
+          <Box sx={{ padding: 3 }}>
+            <Typography variant="body1">
+              No files found for this workflow.
+            </Typography>
+          </Box>
+        )}
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={2}>
+        {statusLaunch === "loading" && <LoadingElement />}
+        {statusLaunch === "done" && <Settings configText={params} />}
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={3}>
+        {statusLogs === "loading" && <LoadingElement />}
+        {statusLogs === "done" && logs && <Logs log={logs} />}
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={4}>
+        Citation
+      </CustomTabPanel>
+      {isAnyError && (
         <Alert severity="error">
           Error:{" "}
           {typeof errorMsg === "string" ? errorMsg : "Something went wrong!"}
