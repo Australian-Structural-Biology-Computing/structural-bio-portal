@@ -1,8 +1,6 @@
 import { LaunchLogs } from "@/models/workflow";
 
-export async function launchLog(
-  workflowId: string
-): Promise<LaunchLogs> {
+export async function launchLog(workflowId: string): Promise<LaunchLogs> {
   const response = await fetch(`/api/launchLogs?workflowId=${workflowId}`, {
     method: "GET"
   });

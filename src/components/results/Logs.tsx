@@ -1,10 +1,14 @@
 import { LaunchLogs } from "@/models/workflow";
 import { Alert } from "@mui/material";
 import { Box } from "@mui/system";
+import Ansi from "ansi-to-html";
 
 export default function Logs({ log }: { log: LaunchLogs }) {
   const logContent = log.entries.join("\n");
   const logMessage = log.message;
+  const ansiToHtml = new Ansi();
+  const html = ansiToHtml.toHtml(logContent);
+
   return (
     <>
       {logMessage && logMessage.length > 0 ? (
@@ -16,12 +20,13 @@ export default function Logs({ log }: { log: LaunchLogs }) {
             overflowY: "auto",
             borderRadius: 2,
             backgroundColor: "#d2cdcdff",
+            // color: "#fff",
+            fontFamily: "monospace",
             p: 2,
             whiteSpace: "pre-wrap"
           }}
-        >
-          <pre>{logContent}</pre>
-        </Box>
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
       )}
     </>
   );
