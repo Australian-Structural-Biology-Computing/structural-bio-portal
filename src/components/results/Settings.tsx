@@ -12,14 +12,23 @@ export default function Settings({
         height: "80vh",
         overflowY: "auto",
         borderRadius: 2,
-        backgroundColor: "#d2cdcdff",
+        backgroundColor: "#050505ff",
+        color: "#fff",
         p: 2,
         whiteSpace: "pre-wrap"
       }}
     >
       {Object.entries(configText).map(([key, value]) => (
-        <Typography key={key} fontFamily={"monospace"}>
-          {key}: {String(value)}
+        <Typography
+          key={key}
+          fontFamily={"monospace"}
+          marginBottom={1}
+          fontStyle={"bold"}
+        >
+          <Box component="span" fontWeight="bold" color="#11c611ff">
+            {key}:
+          </Box>{" "}
+          {String(value)}
         </Typography>
       ))}
     </Box>
