@@ -23,9 +23,10 @@ A Next.js-based web application for managing and launching structural biology wo
 1. Clone the repository:
 
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/Australian-Structural-Biology-Computing/structural-bio-portal.git
    cd structural-bio-portal
-2. Add a .env.local file to the root directory with the following variables:
+
+2. Add a .env file to the root directory with the following variables:
 
    ```.env
    SEQERA_ACCESS_TOKEN=<your-seqera-token>
