@@ -64,6 +64,8 @@ export default function ParamAccordionGroup({
                     label={
                       param.key.charAt(0).toUpperCase() + param.key.slice(1)
                     }
+                    required={param.required}
+                    defaultValue={param.enum[0]}
                     select
                     helperText={param.help_text}
                     size="small"
@@ -94,6 +96,18 @@ export default function ParamAccordionGroup({
                   name={param.key}
                   label={param.key}
                   defaultValue={param.default}
+                  required={param.required}
+                  rule={{
+                    required: param.required
+                      ? `${param.key} is required`
+                      : false,
+                    pattern: param.pattern
+                      ? {
+                          value: new RegExp(param.pattern),
+                          message: `${param.key} does not match required pattern`
+                        }
+                      : undefined
+                  }}
                   helperText={param.description}
                   sx={{ mb: 2 }}
                   size="small"

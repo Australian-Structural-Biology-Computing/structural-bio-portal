@@ -79,6 +79,7 @@ return (
                 key={param.key}
                 name={param.key}
                 label={param.key.charAt(0).toUpperCase() + param.key.slice(1)}
+                defaultValue={param.enum[0]}
                 select
                 helperText={param.help_text}
                 size="small"
