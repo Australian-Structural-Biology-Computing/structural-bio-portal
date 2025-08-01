@@ -58,6 +58,7 @@ return (
       label="Job Name"
       helperText="Name your workflow"
       size="small"
+      rule={{ required: "Job name is required" }}
     />
     {inputParams.map((param) => {
       switch (param.type) {
@@ -96,12 +97,15 @@ return (
               key={param.key}
               name={param.key}
               label={param.key.charAt(0).toUpperCase() + param.key.slice(1)}
+              required={param.required}
               rule={{
-                required: "Email is required",
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Invalid email format"
-                }
+                required: param.required ? `${param.key} is required` : false,
+                pattern: param.pattern
+                  ? {
+                      value: new RegExp(param.pattern),
+                      message: `${param.key} does not match required pattern`
+                    }
+                  : undefined
               }}
               defaultValue={param.default}
               helperText={param.help_text}

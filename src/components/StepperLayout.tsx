@@ -112,10 +112,23 @@ export default function StepperLayout({
 
   const handleBack = () => setActiveStep((prev) => prev - 1);
   const handleStep = (step: number) => () => setActiveStep(step);
-  const handleComplete = () => {
-    setCompleted({ ...completed, [activeStep]: true });
-    handleNext();
+
+  const handleComplete = async () => {
+    const valid = await methods.trigger(); // validate all fields
+
+    if (valid) {
+      setCompleted({ ...completed, [activeStep]: true });
+      handleNext();
+    } else {
+      // Optional: scroll to first error
+      const firstErrorField = Object.keys(methods.formState.errors)[0];
+      const el = document.querySelector(`[name="${firstErrorField}"]`);
+      if (el && "scrollIntoView" in el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
   };
+
   const handleReset = () => {
     setActiveStep(0);
     setCompleted({});

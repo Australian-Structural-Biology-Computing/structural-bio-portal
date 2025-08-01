@@ -15,7 +15,10 @@ import { convertFormData } from "@/utils/convertFormData";
 import { parseWorkflowSchema } from "@/utils/parseWorkflowSchema";
 
 export default function RunWorkflowPage() {
-  const methods = useForm({ mode: "onSubmit" });
+  const methods = useForm({
+    mode: "onChange", // validate as the user types
+    reValidateMode: "onChange" // re-validate immediately when input changes
+  });
   const context = useWorkflows();
   const workflows = context.workflows;
   const router = useRouter();
