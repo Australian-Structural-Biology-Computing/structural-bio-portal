@@ -2,80 +2,144 @@ import {
   Box,
   IconButton,
   ListItem,
-  ListItemIcon,
   ListItemText,
-  TextField
+  MenuItem,
+  Typography
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
-import { useEffect, useState } from "react";
-import FormProvider from "./form/FormProvider";
+import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
+import FTextField from "./form/FTextField";
+import FCheckbox from "./form/FCheck";
 
 export default function ParamsSummary({
   paramKey,
   value,
   onChange,
-  methods
+  methods,
+  type,
+  enumOptions = [],
+  help_text,
+  required,
+  pattern,
+  description
 }: {
   paramKey: string;
-  value: string;
-  onChange: (newVal: string) => void;
+  value: any;
+  onChange: (newVal: any) => void;
   methods: UseFormReturn<any>;
+  type?: string;
+  enumOptions?: any[];
+  help_text?: string;
+  required?: boolean;
+  pattern?: string;
+  description?: string;
 }) {
   const [editMode, setEditMode] = useState(false);
-  const [tempValue, setTempValue] = useState(value);
+  const error = methods.formState.errors[paramKey]?.message;
 
-  useEffect(() => {
-    if (!editMode) {
-      setTempValue(value);
-    }
-  }, [value, editMode]);
-
-  const handleToggleEdit = () => {
+  const handleToggleEdit = async () => {
     if (editMode) {
-      onChange(tempValue);
+      const isValid = await methods.trigger(paramKey);
+      if (isValid) {
+        const updatedValue = methods.getValues(paramKey);
+        onChange(updatedValue);
+        setEditMode(false);
+      }
+    } else {
+      setEditMode(true);
     }
-    setEditMode(!editMode);
   };
 
-  return (
-    <FormProvider methods={methods}>
-      <ListItemIcon>
-        {paramKey
-          .replace(/[-_]/g, " ")
-          .replace(/\b\w/g, (c) => c.toUpperCase())}
-      </ListItemIcon>
-      <Box boxShadow={1} width={"100%"} padding={1}>
-        <ListItem
-          key={value}
-          disableGutters
-          sx={{ minHeight: 40 }}
-          secondaryAction={
-            <IconButton
-              aria-label={editMode ? "Save" : "Edit"}
-              onClick={handleToggleEdit}
-              sx={{ ml: 1 }}
-            >
-              {editMode ? <SaveIcon /> : <EditIcon />}
-            </IconButton>
-          }
-        >
-          <ListItemText
-            primary={
-              editMode ? (
-                <TextField
-                  value={tempValue}
-                  onChange={(e) => setTempValue(e.target.value)}
-                  size="small"
-                />
-              ) : (
-                `${value}`
-              )
-            }
+  let inputField;
+  if (editMode) {
+    switch (type) {
+      case "boolean":
+        inputField = (
+          <FCheckbox
+            key={paramKey}
+            name={paramKey}
+            label={paramKey}
+            sx={{ mb: 1 }}
           />
-        </ListItem>
-      </Box>
-    </FormProvider>
+        );
+        break;
+
+      default:
+        inputField = (
+          <FTextField
+            key={paramKey}
+            name={paramKey}
+            defaultValue={value}
+            label={paramKey.charAt(0).toUpperCase() + paramKey.slice(1)}
+            required={required}
+            select={enumOptions.length > 0}
+            helperText={help_text || description}
+            size="small"
+            sx={{ mb: 2 }}
+            rule={{
+              required: required ? `${paramKey} is required` : false,
+              pattern: pattern
+                ? {
+                    value: new RegExp(pattern),
+                    message: `${paramKey} does not match required pattern`
+                  }
+                : undefined
+            }}
+            type={type === "integer" ? "number" : "text"}
+          >
+            {enumOptions.map((option) => (
+              <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </FTextField>
+        );
+    }
+  } else {
+    inputField = (
+      <Typography variant="body2" sx={{ wordBreak: "break-all" }}>
+        {String(value)}
+      </Typography>
+    );
+  }
+
+  return (
+    <Box boxShadow={1} width={"100%"} padding={1} mb={2}>
+      <ListItem
+        key={paramKey}
+        disableGutters
+        sx={{ minHeight: 40 }}
+        secondaryAction={
+          <IconButton
+            aria-label={editMode ? "Save" : "Edit"}
+            onClick={handleToggleEdit}
+            sx={{ ml: 1 }}
+          >
+            {editMode ? <SaveIcon /> : <EditIcon />}
+          </IconButton>
+        }
+      >
+        <ListItemText
+          primary={
+            <Box>
+              <Typography fontWeight="bold" component="span" mr={1}>
+                {paramKey
+                  .replace(/[-_]/g, " ")
+                  .replace(/\b\w/g, (c) => c.toUpperCase())}
+                :
+              </Typography>
+              {inputField}
+              {editMode && error && (
+                <Typography variant="caption" color="error">
+                  {String(error)}
+                </Typography>
+              )}
+            </Box>
+          }
+        />
+      </ListItem>
+    </Box>
   );
 }

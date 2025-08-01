@@ -4,8 +4,6 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  FormControlLabel,
-  Checkbox,
   FormControl,
   FormHelperText,
   Typography,
@@ -15,6 +13,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { InputParams } from "@/models/workflow";
 import FTextField from "@/components/form/FTextField";
 import DragDropUploader from "./DragDropUploader";
+import FCheckbox from "./form/FCheck";
 
 interface ParamAccordionGroupProps {
   groupKey: string;
@@ -48,9 +47,9 @@ export default function ParamAccordionGroup({
           switch (param.type) {
             case "boolean":
               return (
-                <FormControlLabel
+                <FCheckbox
                   key={param.key}
-                  control={<Checkbox name={param.key} />}
+                  name={param.key}
                   label={param.key}
                   sx={{ mb: 1 }}
                 />

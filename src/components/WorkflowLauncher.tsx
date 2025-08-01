@@ -1,6 +1,6 @@
 "use client";
 
-import { Checkbox, FormControlLabel, MenuItem } from "@mui/material";
+import { MenuItem } from "@mui/material";
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { useRouter } from "next/router";
@@ -8,8 +8,13 @@ import { useWorkflows } from "@/context/DBContext";
 import FTextField from "@/components/form/FTextField";
 import FormProvider from "@/components/form/FormProvider";
 import { InputParams, WorkflowInputSchema } from "@/models/workflow";
+import FCheckbox from "./form/FCheck";
 
-export default function WorkflowLauncher({ methods }: { methods: UseFormReturn<any> }) {
+export default function WorkflowLauncher({
+  methods
+}: {
+  methods: UseFormReturn<any>;
+}) {
   const context = useWorkflows();
   const workflows = context?.workflows;
   const params = useRouter();
@@ -50,72 +55,72 @@ export default function WorkflowLauncher({ methods }: { methods: UseFormReturn<a
     fetchSchema();
   }, [workflow?.schema]);
 
-return (
-  <FormProvider methods={methods}>
-    <FTextField
-      required
-      name="runName"
-      label="Job Name"
-      helperText="Name your workflow"
-      size="small"
-      rule={{ required: "Job name is required" }}
-    />
-    {inputParams.map((param) => {
-      switch (param.type) {
-        case "boolean":
-          return (
-            <FormControlLabel
-              key={param.key}
-              control={<Checkbox name={param.key} />}
-              label={param.key}
-              sx={{ mb: 1 }}
-            />
-          );
+  return (
+    <FormProvider methods={methods}>
+      <FTextField
+        required
+        name="runName"
+        label="Job Name"
+        helperText="Name your workflow"
+        size="small"
+        rule={{ required: "Job name is required" }}
+      />
+      {inputParams.map((param) => {
+        switch (param.type) {
+          case "boolean":
+            return (
+              <FCheckbox
+                key={param.key}
+                name={param.key}
+                label={param.key}
+                sx={{ mb: 1 }}
+              />
+            );
 
-        default:
-          if (param.enum.length > 0) {
+          default:
+            if (param.enum.length > 0) {
+              return (
+                <FTextField
+                  key={param.key}
+                  name={param.key}
+                  label={param.key.charAt(0).toUpperCase() + param.key.slice(1)}
+                  defaultValue={param.enum[0]}
+                  select
+                  helperText={param.help_text}
+                  size="small"
+                  sx={{ mb: 2 }}
+                >
+                  {param.enum.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </FTextField>
+              );
+            }
             return (
               <FTextField
                 key={param.key}
                 name={param.key}
                 label={param.key.charAt(0).toUpperCase() + param.key.slice(1)}
-                defaultValue={param.enum[0]}
-                select
+                required={param.required}
+                rule={{
+                  required: param.required ? `${param.key} is required` : false,
+                  pattern: param.pattern
+                    ? {
+                        value: new RegExp(param.pattern),
+                        message: `${param.key} does not match required pattern`
+                      }
+                    : undefined
+                }}
+                defaultValue={param.default}
                 helperText={param.help_text}
-                size="small"
                 sx={{ mb: 2 }}
-              >
-                {param.enum.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </FTextField>
+                size="small"
+              />
             );
-          }
-          return (
-            <FTextField
-              key={param.key}
-              name={param.key}
-              label={param.key.charAt(0).toUpperCase() + param.key.slice(1)}
-              required={param.required}
-              rule={{
-                required: param.required ? `${param.key} is required` : false,
-                pattern: param.pattern
-                  ? {
-                      value: new RegExp(param.pattern),
-                      message: `${param.key} does not match required pattern`
-                    }
-                  : undefined
-              }}
-              defaultValue={param.default}
-              helperText={param.help_text}
-              sx={{ mb: 2 }}
-              size="small"
-            />
-          );
-      }
-    })}
-  </FormProvider>
-);
+        }
+      })}
+    </FormProvider>
+  );
 }

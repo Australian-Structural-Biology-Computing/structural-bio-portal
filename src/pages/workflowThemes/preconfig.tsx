@@ -20,7 +20,6 @@ export default function PreConfigWorkflows() {
   const workflows = allWorkflows
     ? allWorkflows.filter((wf) => wf.preconfig === themesId)
     : [];
-  console.log(workflows);
   return (
     <Box
       sx={{
