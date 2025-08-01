@@ -6,14 +6,15 @@ import Ansi from "ansi-to-html";
 export default function Logs({ log }: { log: LaunchLogs }) {
   const logContent = log.entries.join("\n");
   const logMessage = log.message;
-const ansiToHtml = new Ansi({
-  fg: "#000000", // Default foreground color
-  bg: "#ffffff", // Default background color
-  colors: {
-    2: "#11c611ff", // ANSI green → bright green
-    4: "#ffffff" // ANSI blue → white
-  }
-});
+  const ansiToHtml = new Ansi({
+    escapeXML: false,
+    fg: "#000000", // Default foreground color
+    bg: "#ffffff", // Default background color
+    colors: {
+      2: "#11c611ff", // ANSI green → bright green
+      4: "#ffffff" // ANSI blue → white
+    }
+  });
 const html = ansiToHtml.toHtml(logContent);
 
 return (
