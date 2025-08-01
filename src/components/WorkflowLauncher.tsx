@@ -96,6 +96,13 @@ return (
               key={param.key}
               name={param.key}
               label={param.key.charAt(0).toUpperCase() + param.key.slice(1)}
+              rule={{
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Invalid email format"
+                }
+              }}
               defaultValue={param.default}
               helperText={param.help_text}
               sx={{ mb: 2 }}

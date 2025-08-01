@@ -22,64 +22,6 @@ export default function RunWorkflowPage() {
   const workflowId = Number(router.query.id);
   const workflow = workflows?.find((wf) => wf.id === workflowId);
 
-  const [formData] = useState<WorkflowLaunchForm>();
-  const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">(
-    "idle"
-  );
-  const [runID, setRunId] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
-  const [wParams, setWParams] = useState<WorkflowParams>({});
-
-  useEffect(() => {
-    if (!workflow?.schema) return;
-
-    const loadParams = async () => {
-      try {
-        const parsed = await parseWorkflowSchema(workflow.schema);
-        setWParams(parsed);
-      } catch (error) {
-        console.error("Error loading workflow schema:", error);
-      }
-    };
-
-    loadParams();
-  }, [workflow?.schema]);
-  const handleSubmit = async (data?: any) => {
-    try {
-      setStatus("loading");
-      const formToUse = data ?? formData;
-      if (!formToUse) {
-        alert("No form data found.");
-        setStatus("idle");
-        return;
-      }
-      // setFormData(formToUse);
-      const convertedParams = convertFormData(formToUse, wParams);
-
-      // setFormData(convertedParams);
-      // if it's the final submit (in case 2)
-      const fullPayload: WorkflowLaunchForm = {
-        pipeline: workflow?.github || "",
-        revision: workflow?.revision || "",
-        configProfiles: workflow?.configProfiles || [""],
-        runName: convertedParams?.["runName"] || "default-name",
-        paramsText: JSON.stringify({
-          ...convertedParams
-        }),
-        ...formToUse
-      };
-      const result = await launchWorkflow(fullPayload);
-      console.log("Workflow launched successfully:", result);
-      setRunId(result);
-      setStatus("done");
-      setTimeout(() => router.push({ pathname: "/jobs" }), 3000);
-    } catch (error: any) {
-      console.error("Launch failed:", error);
-      setStatus("error");
-      setErrorMsg(error);
-    }
-  };
-
   const stepContent = (step: number) => {
     switch (step) {
       //step 1: input-output options
@@ -92,38 +34,27 @@ export default function RunWorkflowPage() {
       case 2:
         const submittedData = methods.watch();
         return (
-          <FormProvider methods={methods}>
-            <form
-              onSubmit={methods.handleSubmit((data) => {
-                handleSubmit(data);
-              })}
-            >
-              <Box sx={{ width: "100%" }}>
-                <Stack
-                  spacing={1}
-                  alignContent="center"
-                  sx={{
-                    mb: 2,
-                    justifyContent: "center",
-                    alignItems: "flex-start"
-                  }}
-                >
-                  {submittedData &&
-                    Object.entries(submittedData).map(([key, value]) => (
-                      <ParamsSummary
-                        key={key}
-                        paramKey={key}
-                        value={value}
-                        onChange={(newVal) => methods.setValue(key, newVal)}
-                      />
-                    ))}
-                </Stack>
-                <Button type="submit" variant="contained" sx={{ mt: 2 }}>
-                  Final Submit
-                </Button>
-              </Box>
-            </form>
-          </FormProvider>
+          <Stack
+            spacing={1}
+            alignContent="center"
+            sx={{
+              mb: 2,
+              justifyContent: "center",
+              alignItems: "flex-start",
+              width: "100%"
+            }}
+          >
+            {submittedData &&
+              Object.entries(submittedData).map(([key, value]) => (
+                <ParamsSummary
+                  key={key}
+                  paramKey={key}
+                  value={value}
+                  onChange={(newVal) => methods.setValue(key, newVal)}
+                  methods={methods}
+                />
+              ))}
+          </Stack>
         );
       default:
         return null;
@@ -138,36 +69,13 @@ export default function RunWorkflowPage() {
       justifyContent="center"
     >
       {workflow ? (
-        <>
-          {status === "idle" && (
-            <FormProvider {...{ methods }}>
-              <StepperLayout
-                steps={["Job Info", "Input Parameters", "Review & Launch"]}
-                stepContent={stepContent}
-              />{" "}
-            </FormProvider>
-          )}
-          {status === "loading" && (
-            <>
-              <CircularProgress />
-              <Typography variant="body1">Your job is submitting...</Typography>
-            </>
-          )}
-          {status === "done" && (
-            <Alert severity="success">
-              Successfully launched workflow ID: {runID}! Re-directing to the
-              job list...
-            </Alert>
-          )}
-          {status === "error" && (
-            <Alert severity="error">
-              Error:{" "}
-              {typeof errorMsg === "string"
-                ? errorMsg
-                : "Something went wrong!"}
-            </Alert>
-          )}
-        </>
+        <FormProvider {...{ methods }}>
+          <StepperLayout
+            steps={["Job Info", "Input Parameters", "Review & Launch"]}
+            stepContent={stepContent}
+            methods={methods}
+          />{" "}
+        </FormProvider>
       ) : (
         <Alert severity="error">
           There is no pre-config workflow available now. Please try another

@@ -9,15 +9,19 @@ import {
 import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
 import { useEffect, useState } from "react";
+import FormProvider from "./form/FormProvider";
+import { UseFormReturn } from "react-hook-form";
 
 export default function ParamsSummary({
   paramKey,
   value,
-  onChange
+  onChange,
+  methods
 }: {
   paramKey: string;
   value: string;
   onChange: (newVal: string) => void;
+  methods: UseFormReturn<any>;
 }) {
   const [editMode, setEditMode] = useState(false);
   const [tempValue, setTempValue] = useState(value);
@@ -36,7 +40,7 @@ export default function ParamsSummary({
   };
 
   return (
-    <>
+    <FormProvider methods={methods}>
       <ListItemIcon>
         {paramKey
           .replace(/[-_]/g, " ")
@@ -72,6 +76,6 @@ export default function ParamsSummary({
           />
         </ListItem>
       </Box>
-    </>
+    </FormProvider>
   );
 }
