@@ -7,7 +7,7 @@ export default function Logs({ log }: { log: LaunchLogs }) {
   const logContent = log.entries.join("\n");
   const logMessage = log.message;
   const ansiToHtml = new Ansi({
-    escapeXML: false,
+    escapeXML: true,
     fg: "#000000", // Default foreground color
     bg: "#ffffff", // Default background color
     colors: {
