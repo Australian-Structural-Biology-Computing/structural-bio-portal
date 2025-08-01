@@ -10,13 +10,16 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@aws-sdk/s3-request-presigner": "^3.855.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.2.0",
     "@mui/material": "^7.2.0",
     "@mui/x-data-grid": "^8.0.0-beta.3",
     "@toolpad/core": "^0.16.0",
+    "ansi-to-html": "^0.7.2",
     "axios": "^1.10.0",
+    "client-s3": "github:aws-sdk/client-s3",
     "next": "15.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

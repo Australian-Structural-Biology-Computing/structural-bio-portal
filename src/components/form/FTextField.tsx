@@ -1,16 +1,17 @@
 import { useFormContext, Controller } from "react-hook-form";
 import { TextField, TextFieldProps } from "@mui/material";
 type FTextFieldProps = {
-    name: string;
-} & TextFieldProps
+  name: string;
+  defaultValue?: any;
+} & TextFieldProps;
 
-function FTextField({ name, ...other }: FTextFieldProps) {
+function FTextField({ name, defaultValue, ...other }: FTextFieldProps) {
   const { control } = useFormContext();
   return (
     <Controller
       name={name}
       control={control}
-      defaultValue=""
+      defaultValue={defaultValue || ""}
       render={({ field, fieldState: { error } }) => (
         <TextField
           {...field}

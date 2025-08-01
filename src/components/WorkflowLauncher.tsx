@@ -50,58 +50,60 @@ export default function WorkflowLauncher({ methods }: { methods: UseFormReturn<a
     fetchSchema();
   }, [workflow?.schema]);
 
-  return (
-    <FormProvider methods={methods}>
-      <FTextField
-        required
-        name="runName"
-        label="Job Name"
-        helperText="Name your workflow"
-        size="small"
-      />
-      {inputParams.map((param) => {
-        switch (param.type) {
-          case "boolean":
-            return (
-              <FormControlLabel
-                key={param.key}
-                control={<Checkbox name={param.key} />}
-                label={param.key}
-                sx={{ mb: 1 }}
-              />
-            );
-          default:
-            if (param.enum.length > 0) {
-              return (
-                <FTextField
-                  key={param.key}
-                  name={param.key}
-                  label={param.key.charAt(0).toUpperCase() + param.key.slice(1)}
-                  select
-                  helperText={param.help_text}
-                  size="small"
-                  sx={{ mb: 2 }}
-                >
-                  {param.enum.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
-                </FTextField>
-              );
-            }
+return (
+  <FormProvider methods={methods}>
+    <FTextField
+      required
+      name="runName"
+      label="Job Name"
+      helperText="Name your workflow"
+      size="small"
+    />
+    {inputParams.map((param) => {
+      switch (param.type) {
+        case "boolean":
+          return (
+            <FormControlLabel
+              key={param.key}
+              control={<Checkbox name={param.key} />}
+              label={param.key}
+              sx={{ mb: 1 }}
+            />
+          );
+
+        default:
+          if (param.enum.length > 0) {
             return (
               <FTextField
                 key={param.key}
                 name={param.key}
                 label={param.key.charAt(0).toUpperCase() + param.key.slice(1)}
+                select
                 helperText={param.help_text}
-                sx={{ mb: 2 }}
                 size="small"
-              />
+                sx={{ mb: 2 }}
+              >
+                {param.enum.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </FTextField>
             );
-        }
-      })}
-    </FormProvider>
-  );
+          }
+          return (
+            <FTextField
+              key={param.key}
+              name={param.key}
+              label={param.key.charAt(0).toUpperCase() + param.key.slice(1)}
+              defaultValue={param.default}
+              helperText={param.help_text}
+              sx={{ mb: 2 }}
+              size="small"
+            />
+          );
+      }
+    })}
+  </FormProvider>
+);
 }

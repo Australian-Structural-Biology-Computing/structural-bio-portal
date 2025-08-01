@@ -93,6 +93,7 @@ export default function ParamAccordionGroup({
                   key={param.key}
                   name={param.key}
                   label={param.key}
+                  defaultValue={param.default}
                   helperText={param.description}
                   sx={{ mb: 2 }}
                   size="small"
